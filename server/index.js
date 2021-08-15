@@ -18,6 +18,9 @@ app.use(
 	})
 );
 
+//db connection
+const connection = require('./db');
+
 //Routes
 app.use('/api/product', require('./routes/api/product'));
 app.use('/api/change', require('./routes/api/change'));
