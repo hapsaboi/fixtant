@@ -132,7 +132,7 @@ router.get('/loggedIn', async (req, res) => {
 //@routes GET api/user/loggedIn
 //@desc Check if a user is loggedIn
 router.get('/log', async (req, res) => {
-	res.send("shush");
+	res.json("shush");
 });
 
 //@routes GET api/users/logout
