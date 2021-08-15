@@ -22,7 +22,7 @@ function RouterComp() {
                     <Route path='/accountverify/:verifyToken'> <VerifyAccount /> </Route>
                     <Route path='/forgotpassword'> <ForgotPassword /> </Route>
                     <Route path='/passwordreset/:resetToken'> <ResetPassword /> </Route>
-                    {/* <Route component={Auth} /> */}
+                    <Route from="*" component={Auth} />
                 </>
                 :
                 <>
