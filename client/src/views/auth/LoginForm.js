@@ -17,6 +17,7 @@ function LoginForm({ getLoggedIn }) {
 		try {
 			const { data } = await Axios.post(authenticate.userAuth, loginData);
 			if (data.auth === true) {
+				await getLoggedIn();
 				history.push('/admin/dashboard');
 			} else {
 				setMessage(data.msg);

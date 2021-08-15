@@ -26,6 +26,7 @@ function AuthContextProvider(props) {
 				if (response.data.reason==="Expired") {
 					Axios.get(authenticate.logout);
 					setLoggedIn(false);
+					console.log(response.data)
 				}else{
 					Axios.get(authenticate.getUserData).then((user)=>{
 						setLoggedIn(response.data);
@@ -36,17 +37,26 @@ function AuthContextProvider(props) {
 				setIsLoading(false);
 			});
 		},
-		[ loggedIn ]
+		[  ]
 	);
-	if (isLoading) { 
-		 
+	if (isLoading) { 	 
 		return (
 			<div className="loaderDiv" style={{position: "absolute",top: "50%",left: "50%", transform: "translate(-50%, -50%)"}}>
 				<GridLoader color={"white"} loading={true} size={40} />
 			</div>
 		);
 	}
-	return <AuthContext.Provider value={{ loggedIn, getLoggedIn,userDetail }}>{props.children}</AuthContext.Provider>;
+	else if(loggedIn!==undefined){
+		return <AuthContext.Provider value={{ loggedIn, getLoggedIn,userDetail }}>{props.children}</AuthContext.Provider>;
+	}
+	else{
+		return (
+			<div className="loaderDiv" style={{position: "absolute",top: "50%",left: "50%", transform: "translate(-50%, -50%)"}}>
+				<GridLoader color={"white"} loading={true} size={40} />
+				Waiting for Authentication
+			</div>
+		);
+	}
 }
 
 export default AuthContextProvider;

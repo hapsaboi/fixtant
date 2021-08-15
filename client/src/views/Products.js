@@ -110,7 +110,7 @@ function Products() {
 
   return (
     <>
-    {notificationStatus?<Notifications details={notificationDetails} />:null}
+      {notificationStatus?<Notifications details={notificationDetails} />:null}
       <div className="content">
         <Row>
           <Col md="12">
@@ -138,7 +138,7 @@ function Products() {
                         tag="label"
                         className="btn-simple"
                         color="info"
-                        id={key}
+                        key={key}
                         size="sm"
                         onClick={() => {
                           const checked = searchColumns.includes(column);
@@ -168,7 +168,7 @@ function Products() {
                     {search(result).map((row,key) => (
                       <tr key={key}>
                         {columns.map((column,key) => (
-                          <>{key>0?<td key={key}>{row[column]} </td>:""}</>
+                          <>{key>0?<td key={key}>{row[column]} </td>:null}</>
                         ))}
                         <td>
                           <div>
