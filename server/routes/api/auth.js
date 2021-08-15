@@ -91,9 +91,7 @@ router.post('/', async (req, res) => {
                         //         phone: user.phone
                         //     }
                         // });
-                        res.cookie('token', token, {
-                            httpOnly: true
-                        }).send({ 'auth': true });
+                        res.status(200).send({ 'auth': true, token });
                     }
                 )
             })

@@ -110,9 +110,7 @@ router.post('/add_user', async (req, res) => {
 //@desc Check if a user is loggedIn
 router.get('/loggedIn', async (req, res) => {
 	try {
-		console.log(req.cookies);
-		console.log("hanis");
-		const token = req.cookies.token;
+		const token = req.headers.authorization;
 		//check for token
 		if (!token) {
 			res.status(200).send(false);

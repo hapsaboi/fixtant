@@ -5,6 +5,10 @@ import GridLoader from "react-spinners/GridLoader";
 
 const AuthContext = createContext();
 Axios.defaults.withCredentials = true;
+
+
+
+
 export const useAuth = () => useContext(AuthContext);
 
 function AuthContextProvider(props) {
@@ -13,6 +17,7 @@ function AuthContextProvider(props) {
 	const [userDetail, setUserDetail] = useState({});
 
 	async function getLoggedIn() {
+		Axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
 		const loggedInRes = await Axios.get(authenticate.loggedIn);
 		if (loggedInRes.data.reason==="Expired") {
 			Axios.get(authenticate.logout);
@@ -22,12 +27,15 @@ function AuthContextProvider(props) {
 	}
 	useEffect(
 		() => {
+			Axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
 			Axios.get(authenticate.loggedIn).then((response) => {
 				if (response.data.reason==="Expired") {
 					Axios.get(authenticate.logout);
 					setLoggedIn(false);
 					console.log(response.data)
 				}else{
+					//setting token to localStorage
+
 					Axios.get(authenticate.getUserData).then((user)=>{
 						setLoggedIn(response.data);
 						setUserDetail(user);	

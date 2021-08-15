@@ -8,7 +8,7 @@ const Users = require('../models/User');
 function auth(req, res, next) {
     
     try {
-         const token = req.cookies.token;
+         const token = req.headers.authorization;
         //check for token
         if (!token) {res.json({status:false, msg: "No token, authorization denied" })}
         else{
@@ -27,7 +27,7 @@ function auth(req, res, next) {
 async function authDetail(req, res, next) {
 
     try {
-         const token = req.cookies.token;
+         const token = req.headers.authorization;
         //check for token
         if (!token) {res.status(401).send({ status:false, msg: "No token, authorization denied" })}
         else{
