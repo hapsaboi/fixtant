@@ -3,6 +3,7 @@ import axios from 'axios';
 import { product } from '../data/api';
 import { FaTrashAlt } from 'react-icons/fa';
 import Notifications from "components/Notification/Notification";
+import { FiArrowLeft } from "react-icons/fi";
 // reactstrap components
 import {
   Card,
@@ -114,6 +115,7 @@ function Products() {
       <div className="content">
         <Row>
           <Col md="12">
+            {loading === true ?
             <Card>
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Products</CardTitle> 
@@ -138,7 +140,7 @@ function Products() {
                         tag="label"
                         className="btn-simple"
                         color="info"
-                        key={key}
+                        id={key}
                         size="sm"
                         onClick={() => {
                           const checked = searchColumns.includes(column);
@@ -183,6 +185,11 @@ function Products() {
                 </Table>
               </CardBody>
             </Card>
+            :
+              <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>setLoading(!loading)} className="btn-fill" color="primary">
+                <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Products </font>
+              </Button>
+            }
           </Col>
           <Col md="12">
             <Card className="card-user">
@@ -314,12 +321,18 @@ function Products() {
                         </Table>
                   
                       </div>
-                      <Button onClick={()=>handleAddClick()} className="btn-fill" color="primary" type="submit">
-                        Add Product Variation
-                      </Button>
-                      <Button onClick={()=>updateProduct()} className="btn-fill pull-right" color="primary" type="submit">
-                        Update Product
-                      </Button>
+                      <Row>
+                        <Col md="6">
+                          <Button onClick={()=>handleAddClick()} className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
+                            Add Product Variation
+                          </Button>
+                        </Col>
+                        <Col md="6">
+                        <Button onClick={()=>updateProduct()} className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
+                          Update Product
+                        </Button>
+                        </Col>
+                      </Row>
       
                     </CardBody>
                   )

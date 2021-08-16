@@ -3,6 +3,7 @@ import { sale,product } from '../data/api';
 import axios from 'axios';
 import Notifications from "components/Notification/Notification";
 import 'boxicons';
+import { FiArrowLeft } from "react-icons/fi";
 
 // reactstrap components
 import {
@@ -52,11 +53,11 @@ function Sale() {
       let sP = (products.filter(item => item._id === id))[0];
       sP.key = key;
       setCurrentProduct({...sP, selling_price:0});
-      console.log(currentProduct);
       setLoading(false);
     }    
 
     function addToCart () {
+
       let temp = currentProduct;
       let toBuy = temp.toBuy ? temp.toBuy : 1;
 
@@ -68,23 +69,43 @@ function Sale() {
           variation: temp.variations[temp.key].variation,
           price: selling_price > 0 ? selling_price: temp.variations[temp.key].selling_price
         };
+        const found = cart.some(el => el.product_id === currentProduct._id);
+        
+        //checking if item already exist in cart
+        if(found){
+          setCart(cart.filter(item => !variartionCheck(item,cartItem.variation,cartItem.product_id)));
+
+          setNotificationDetails({msg:"Item already already exist in cart, updated with new quantity", type:"info"});
+          setNotificationStatus(true);
+        }else{
+          setNotificationDetails({msg:"Item Added to Cart Successfully", type:"success"});
+          setNotificationStatus(true);
+        }
         setCart([...cart,cartItem]);
         setCurrentProduct({...currentProduct,toBuy:1});
         setSellingPrice(0);
-      
-        setNotificationDetails({msg:"Item Added to Cart Successfully", type:"success"});
-        setNotificationStatus(true);
       }else{
         setNotificationDetails({msg:"Not Enough Items on Stock", type:"danger"});
         setNotificationStatus(true);
       }
     }
 
-    const handleRemoveItem = (e) => {
-      setCart(cart.filter(item => item.product_id !==  e));
+    const handleRemoveItem = (id,variation) => {
+      setCart(cart.filter(item =>  !variartionCheck(item,variation,id)));
+
       setNotificationDetails({msg:"Item Removed From Cart Successfully", type:"success"});
       setNotificationStatus(true);
     };
+
+    const variartionCheck = (item, variation,id) =>{
+      if(id === item.product_id){
+        console.log((item.variation === variation));
+        return (item.variation === variation);
+      }       
+      else{
+        return false;
+      } 
+    }
 
     async function addSale () {
       const saleData = {...{...buyerDetail, items:cart}};
@@ -125,9 +146,10 @@ function Sale() {
       {notificationStatus === true ? <Notifications details={notificationDetails}  />:null}
       <div className="content">
         <Row>
+          {loading === true ?
           <Col md="8">
             {!sellDetailsMode ? 
-              <Card>
+            <Card>
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Products</CardTitle>
                 <FormGroup className='pull-right'>
@@ -197,7 +219,8 @@ function Sale() {
               </CardBody>
             </Card>
             :
-              <Card>
+            // inserting user data
+            <Card>
               <CardHeader>
                 <h5 className="title">Customer Details</h5>
               </CardHeader>
@@ -261,6 +284,11 @@ function Sale() {
             </Card>
             }
           </Col>
+          :
+          <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>setLoading(!loading)} className="btn-fill" color="primary">
+            <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Products </font>
+          </Button>
+          }
           <Col md="4">
             <Card className="card-user">
               <CardBody>
@@ -274,7 +302,7 @@ function Sale() {
                     <img
                       alt="..."
                       className="avatar"
-                      src={require("assets/img/salti.png").default}
+                      src={require("assets/img/product.png").default}
                     />
                     <h5 className="title"><box-icon style={{verticalAlign:"middle"}} color="white" name="cart-alt" /> Cart Items </h5>
                   </a>
@@ -296,7 +324,7 @@ function Sale() {
                           <td className="text-center">{cartItem.quantity}</td>
                           <td className="text-center">{cartItem.price}</td>
                           <td className="text-center">
-                            <font color="red" size="+2" onClick={()=>handleRemoveItem(cartItem.product_id)} style={{verticalAlign:"middle", cursor:"pointer"}}>x</font>  
+                            <font color="red" size="+2" onClick={()=>handleRemoveItem(cartItem.product_id,cartItem.variation)} style={{verticalAlign:"middle", cursor:"pointer"}}>x</font>  
                           </td>
                         </tr>
                         )
@@ -312,10 +340,9 @@ function Sale() {
               </CardFooter>
             </Card>
           </Col>
-          <Col md="12">
+          <Col md="8">
             <Card className="card-user">
-              {loading === false
-                ? 
+              {loading === false? 
                 (
                   [currentProduct.variations[currentProduct.key]].map((cP,key) => 
                     <CardBody key={key}>

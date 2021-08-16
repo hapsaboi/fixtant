@@ -4,7 +4,7 @@ import { sale } from '../data/api';
 import dateFormat from 'dateformat';
 import parse from 'html-react-parser';
 import Notifications from "components/Notification/Notification";
-
+import { FiArrowLeft } from "react-icons/fi";
 
 // reactstrap components
 import {
@@ -80,6 +80,7 @@ function ShowSales() {
       <div className="content">
         <Row>
           <Col md="12">
+            {loading === true ?
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Sales Record</CardTitle>
@@ -160,6 +161,11 @@ function ShowSales() {
                 </Table>
               </CardBody>
             </Card>
+            :
+            <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>setLoading(!loading)} className="btn-fill" color="primary">
+              <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Sales </font>
+            </Button>
+          }
           </Col>
           <Col md="12">
             <Card className="card-user">

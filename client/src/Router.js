@@ -11,8 +11,6 @@ import ForgotPassword from './views/auth/ForgotPassword';
 
 function RouterComp() {
     const { loggedIn } = useAuth();
-
-    console.log(loggedIn);
     return (
         <BrowserRouter>
           <Switch>
@@ -22,7 +20,7 @@ function RouterComp() {
                     <Route path='/accountverify/:verifyToken'> <VerifyAccount /> </Route>
                     <Route path='/forgotpassword'> <ForgotPassword /> </Route>
                     <Route path='/passwordreset/:resetToken'> <ResetPassword /> </Route>
-                    <Route from="*" component={Auth} />
+                    
                 </>
                 :
                 <>

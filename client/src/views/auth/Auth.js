@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import loginImg from './img/inventory.png';
+import loginImg from './img/inventory.svg';
 //import logo from '../../assets/logo/White/Full White.svg';
-import registerImg from './img/register.svg';
+import registerImg from './img/calculator.svg';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import { Redirect } from 'react-router-dom';
@@ -47,7 +47,7 @@ function Login() {
                             </p>
                             <button className="btn-auth transparent" id="sign-in-btn" onClick={() => setIsLogin(true)}>Sign in</button>
                         </div>
-                        <img src={registerImg} className="image" alt="" />
+                        <img src={registerImg} style={{padding:"10%"}} className="image" alt="" />
                     </div>
                 </div>
             </div>

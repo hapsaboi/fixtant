@@ -187,7 +187,7 @@ function Profile() {
                     <img
                       alt="..."
                       className="avatar"
-                      src={require("assets/img/salti.png").default}
+                      src={require("assets/img/product.png").default}
                     />
                     <h5 className="title">{userDetails.name}</h5>
                   </a>
