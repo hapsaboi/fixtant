@@ -66,7 +66,8 @@ function AuthContextProvider(props) {
 		return (
 			<div className="loaderDiv" style={{position: "absolute",top: "50%",left: "50%", transform: "translate(-50%, -50%)"}}>
 				<GridLoader color={"white"} loading={true} size={40} />
-				Waiting for Authentication
+				<br />
+				Waiting for Authentication...
 			</div>
 		);
 	}

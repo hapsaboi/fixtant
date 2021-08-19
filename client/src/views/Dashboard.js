@@ -6,6 +6,9 @@ import Notifications from "components/Notification/Notification";
 import moment from "moment";
 
 import DailySalesChart from "components/DashboardComponents/DailySalesChart";
+import { BsBarChartFill } from "react-icons/bs";
+import {RiCreativeCommonsZeroFill} from "react-icons/ri";
+
 // reactstrap components
 import {
   Card,
@@ -51,7 +54,16 @@ function Dashboard() {
       <div className="content">
         <Row>
           <Col xs="12">
-            {Object.keys(sales).length>0?<DailySalesChart sales={sales} setSales={setSales} />:"Loading"}
+            {Object.keys(sales).length>0?<DailySalesChart sales={sales} setSales={setSales} />
+            :
+            <Card className="card">
+              <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
+                <BsBarChartFill size={200} /><br />
+                Nothing To Show Yet...
+                Make Some Sales to See Graphs
+              </div>
+            </Card>
+            }
           </Col>
         </Row>
         <Row>
@@ -64,6 +76,7 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="table-full-width table-responsive">
+                {!Object.keys(today).length === 0? 
                   <Table>
                     <tbody>
                       {today.map((saleItem,key) => 
@@ -87,6 +100,13 @@ function Dashboard() {
                     )}
                     </tbody>
                   </Table>
+                :
+                <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
+                  <RiCreativeCommonsZeroFill size={200} /><br />
+                  Nothing To Show Yet...
+                  Make Some Sales to See Data
+                </div>  
+                }
                 </div>
               </CardBody>
             </Card>

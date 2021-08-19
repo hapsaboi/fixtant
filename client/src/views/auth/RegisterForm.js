@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 import { authenticate } from '../../data/api';
+import { BiEnvelope,BiPhoneCall,BiStore,BiUser } from "react-icons/bi";
+import { BsFillLockFill } from "react-icons/bs";
 
 function Register() {
     const [name, setName] = useState('');
@@ -34,24 +36,24 @@ function Register() {
                 <h2 className="title">Sign up</h2>
                 <h4 style={{ color: 'red', textAlign: 'center' }}>{message}</h4>
                 <div className="input-field">
-                    <i><box-icon name='user' ></box-icon></i>
+                    <i><BiUser className="iconInput" /></i>
                     <input type="text" placeholder="Name ... John Doe" onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div className="input-field">
-                    <i><box-icon name='store-alt' ></box-icon></i>
+                    <i><BiStore className="iconInput" /></i>
                     <input type="text" placeholder="Store Name: Hive Store" onChange={(e) => setStore(e.target.value)} />
                 </div>
                 <div className="input-field">
-                    <i><box-icon name='envelope' ></box-icon></i>
+                    <i><BiEnvelope className="iconInput" /></i>
                     <input type="email" placeholder="Email ... johndoe@aun.edu.ng" onChange={(e) => setEmail(e.target.value)} />
                 </div>
 
                 <div className="input-field">
-                    <i><box-icon name='phone' ></box-icon></i>
+                    <i><BiPhoneCall className="iconInput"/></i>
                     <input type="text" placeholder="Phone 090********" onChange={(e) => setPhone(e.target.value)} />
                 </div>
                 <div className="input-field">
-                    <i><box-icon name='lock' ></box-icon></i>
+                    <i><BsFillLockFill className="iconInput" /></i>
                     <input type="password" placeholder="Password" autoComplete='true' onChange={(e) => setPassword(e.target.value)} />
                 </div>
 

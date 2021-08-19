@@ -376,3 +376,12 @@ body, .auth input {
         left: 50%;
     }
 }
+
+
+.iconInput {
+    font-size: 25px;
+    color: #39B54A;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}

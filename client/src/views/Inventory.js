@@ -3,6 +3,7 @@ import axios from 'axios';
 import Notifications from "components/Notification/Notification";
 import { product } from '../data/api';
 import { FiArrowLeft } from "react-icons/fi";
+import {RiCreativeCommonsZeroFill} from "react-icons/ri";
 
 // reactstrap components
 import {
@@ -180,6 +181,7 @@ function Inventory() {
                 </ButtonGroup>
               </Col>
                 
+              {!Object.keys(products).length === 0?
               <CardBody>
                 <Table className="tablesorter" responsive style={{overflow:"unset"}}>
                   <thead className="text-primary">
@@ -213,6 +215,13 @@ function Inventory() {
                   </tbody>
                 </Table>
               </CardBody>
+              :
+              <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
+                <RiCreativeCommonsZeroFill size={200} /><br />
+                Nothing To Show Yet...
+                Add Some Products to The System
+              </div>  
+              }
             </Card>
             :
               <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>setLoading(!loading)} className="btn-fill" color="primary">

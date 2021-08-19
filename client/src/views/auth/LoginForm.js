@@ -3,6 +3,8 @@ import Axios from 'axios';
 import { useHistory, Link } from 'react-router-dom';
 import logo from '../../assets/logo/White/Full White.svg';
 import { authenticate } from '../../data/api';
+import { BiEnvelope,BiReset } from "react-icons/bi";
+import { BsFillLockFill } from "react-icons/bs";
 
 function LoginForm({ getLoggedIn }) {
 	const [ email, setEmail ] = useState('');
@@ -36,7 +38,7 @@ function LoginForm({ getLoggedIn }) {
 				<h4 style={{ color: 'red', textAlign: 'center' }}>{message}</h4>
 				<div className="input-field">
 					<i>
-						<box-icon name="envelope" />
+						<BiEnvelope className="iconInput" />
 					</i>
 					<input
 						type="text"
@@ -46,7 +48,7 @@ function LoginForm({ getLoggedIn }) {
 				</div>
 				<div className="input-field">
 					<i>
-						<box-icon name="lock" />
+						<BsFillLockFill className="iconInput" />
 					</i>
 					<input
 						type="password"
@@ -60,7 +62,7 @@ function LoginForm({ getLoggedIn }) {
 				<div className="social-media">
 					<Link to="/forgotpassword">
 						<i className="social-icon">
-							<box-icon name="reset" color="white" />
+							<BiReset size={25} color="white"/>
 						</i>
 					</Link>
 				</div>
