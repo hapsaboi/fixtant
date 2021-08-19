@@ -1,177 +1,57 @@
-import React from "react";
-// nodejs library that concatenates classes
-import classNames from "classnames";
-// react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+import React, {useState,useEffect} from "react";
 
+import {sale} from '../data/api';
+import axios from 'axios';
+import Notifications from "components/Notification/Notification";
+import moment from "moment";
+
+import DailySalesChart from "components/DashboardComponents/DailySalesChart";
 // reactstrap components
 import {
-  Button,
-  ButtonGroup,
   Card,
   CardHeader,
   CardBody,
   CardTitle,
-  Label,
-  FormGroup,
-  Input,
   Table,
   Row,
   Col,
-  UncontrolledTooltip,
 } from "reactstrap";
 
-// core components
-import {
-  chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4,
-} from "variables/charts.js";
+function Dashboard() {
+  const [notificationStatus, setNotificationStatus] = useState(false)
+  const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
 
-function Dashboard(props) {
-  const [bigChartData, setbigChartData] = React.useState("data1");
-  const setBgChartData = (name) => {
-    setbigChartData(name);
-  };
+  const [sales, setSales] = useState({});
+  const [today, setToday] = useState([]);
+
+  useEffect(
+    () => {
+      async function fetchSales() {
+				await axios.get(sale.showSales,{params:{duration:'daily'}}).then((response)=>{
+					if(response.data.status===true){
+            if(response.data.data.length>0){
+                let data = response.data.data;
+                setToday(data.filter(obj => moment().isSame(obj.date, 'day')));
+                setSales({daily:data});
+            }; 
+          }
+          else{
+            setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
+            setNotificationStatus(true);
+          }
+        })
+      }
+			fetchSales();
+    },
+  []);
+  // {date:{$gte:ISODate("2021-01-01"),$lt:ISODate("2020-05-01"}}
   return (
     <>
+      {notificationStatus === true ? <Notifications details={notificationDetails}  />:null}
       <div className="content">
         <Row>
           <Col xs="12">
-            <Card className="card-chart">
-              <CardHeader>
-                <Row>
-                  <Col className="text-left" sm="6">
-                    <h5 className="card-category">Daily Sales</h5>
-                    <CardTitle tag="h2">Sales</CardTitle>
-                  </Col>
-                  <Col sm="6">
-                    <ButtonGroup
-                      className="btn-group-toggle float-right"
-                      data-toggle="buttons"
-                    >
-                      <Button
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data1",
-                        })}
-                        color="info"
-                        id="0"
-                        size="sm"
-                        onClick={() => setBgChartData("data1")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Daily
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-single-02" />
-                        </span>
-                      </Button>
-                      <Button
-                        color="info"
-                        id="1"
-                        size="sm"
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data2",
-                        })}
-                        onClick={() => setBgChartData("data2")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Weekly
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-gift-2" />
-                        </span>
-                      </Button>
-                      <Button
-                        color="info"
-                        id="2"
-                        size="sm"
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data3",
-                        })}
-                        onClick={() => setBgChartData("data3")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Monthly
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-tap-02" />
-                        </span>
-                      </Button>
-                    </ButtonGroup>
-                  </Col>
-                </Row>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={chartExample1[bigChartData]}
-                    options={chartExample1.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg="4">
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Total Shipments</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> 763,215
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg="4">
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Daily Sales</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-delivery-fast text-primary" />{" "}
-                  3,500€
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Bar
-                    data={chartExample3.data}
-                    options={chartExample3.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg="4">
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Completed Tasks</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-send text-success" /> 12,100K
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={chartExample4.data}
-                    options={chartExample4.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
+            {Object.keys(sales).length>0?<DailySalesChart sales={sales} setSales={setSales} />:"Loading"}
           </Col>
         </Row>
         <Row>
@@ -186,226 +66,25 @@ function Dashboard(props) {
                 <div className="table-full-width table-responsive">
                   <Table>
                     <tbody>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Update the Documentation</p>
-                          <p className="text-muted">
-                            Dwuamish Head, Seattle, WA 8:47 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip636901683"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip636901683"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input
-                                defaultChecked
-                                defaultValue=""
-                                type="checkbox"
-                              />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">GDPR Compliance</p>
-                          <p className="text-muted">
-                            The GDPR is a regulation that requires businesses to
-                            protect the personal data and privacy of Europe
-                            citizens for transactions that occur within EU
-                            member states.
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip457194718"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip457194718"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Solve the issues</p>
-                          <p className="text-muted">
-                            Fifty percent of all respondents said they would be
-                            more likely to shop at a company
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip362404923"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip362404923"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Release v2.0.0</p>
-                          <p className="text-muted">
-                            Ra Ave SW, Seattle, WA 98116, SUA 11:19 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip818217463"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip818217463"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Export the processed files</p>
-                          <p className="text-muted">
-                            The report also shows that consumers will not easily
-                            forgive a company once a breach exposing their
-                            personal data occurs.
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip831835125"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip831835125"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Arival at export process</p>
-                          <p className="text-muted">
-                            Capitol Hill, Seattle, WA 12:34 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip217595172"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip217595172"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
+                      {today.map((saleItem,key) => 
+                      <>
+                        <tr key={key}>
+                          <td>
+                            <p className="title">
+                              {saleItem.items.map((item,key) => 
+                                <><span key={key}>{item.product_name} - {item.variation}</span><br /></>
+                              )}
+                            </p>
+                            <p className="text-muted">
+                              Buyer: {saleItem.buyer_name}
+                            </p>
+                          </td>
+                          <td className="td-actions text-right">
+                            <span style={{color:"#32CD32"}}>{((saleItem.items).reduce((accumulator,current) => accumulator + current.price, 0)).toLocaleString()} </span>
+                          </td>
+                        </tr>
+                        </>
+                    )}
                     </tbody>
                   </Table>
                 </div>
@@ -423,55 +102,20 @@ function Dashboard(props) {
                     <tr>
                       <th>Product Name</th>
                       <th>Quantity</th>
-                      <th>-</th>
-                      <th className="text-center">Salary</th>
+                      <th>Amount</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+                   
+                    {/* <tr>
                       <td>Dakota Rice</td>
                       <td>Niger</td>
                       <td>Oud-Turnhout</td>
                       <td className="text-center">$36,738</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                      <td>Sinaai-Waas</td>
-                      <td className="text-center">$23,789</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                      <td>Baileux</td>
-                      <td className="text-center">$56,142</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                      <td>Overland Park</td>
-                      <td className="text-center">$38,735</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                      <td>Feldkirchen in Kärnten</td>
-                      <td className="text-center">$63,542</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$78,615</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$98,615</td>
-                    </tr>
-                  </tbody>
-                </Table>
+                    </tr>*/}
+                  </tbody>  
+                  
+                </Table>Coming Soon
               </CardBody>
             </Card>
           </Col>

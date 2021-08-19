@@ -107,7 +107,7 @@ router.post('/', async (req, res) => {
 //@access Private
 router.get('/user', auth, (req, res) => {
     User.findById(req.user.id)
-        .select('-password')
+        .select('name store email')
         .then(user => res.json(user))
 });
 

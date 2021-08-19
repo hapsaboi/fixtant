@@ -32,7 +32,7 @@ function ShowSales() {
 				await axios.get(sale.showSales).then((response)=>{
 					if(response.data.status===true){
             if(response.data.data.length>0){
-                setSales((response.data.data).sort((a, b) => new Date(b.date) - new Date(a.date)))
+                setSales((response.data.data));
             }; 
           }
           else{
@@ -144,10 +144,12 @@ function ShowSales() {
                                     <br />
                               </>
                             )
+                            
                             }
+                            Paid -  {(saleItem.payment_method)}
                           </td>
                           <td>
-                            {(saleItem.items).reduce((accumulator,current) => accumulator + current.price, 0)}
+                            {((saleItem.items).reduce((accumulator,current) => accumulator + current.price, 0)).toLocaleString()} 
                           </td>
                           <td>
                             <Button onClick={()=> selectSale(saleItem._id)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">

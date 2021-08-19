@@ -270,8 +270,8 @@ function Inventory() {
                                   <FormGroup>
                                     Variation : {variationItem.variation} <br/>
                                     Model: {variationItem.model} <br/>
-                                    Buying Price: {variationItem.buying_price} <br/>
-                                    Selling Price: {variationItem.selling_price}
+                                    Buying Price: {variationItem.buying_price.toLocaleString()} <br/>
+                                    Selling Price: {variationItem.selling_price.toLocaleString()}
                                   </FormGroup>
                                 </Col>
                               </td>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Redirect, useLocation } from "react-router-dom";
+import { Switch, Redirect, useLocation,Route } from "react-router-dom";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 
@@ -16,7 +16,7 @@ import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 
 //Routing
-import PrivateRoute from "./PrivateRoute";
+//import PrivateRoute from "./PrivateRoute";
 import { useAuth } from '../../contexts/AuthContext';
 
 var ps;
@@ -71,9 +71,9 @@ function Admin(props) {
     return routes.map((prop, key) => {
       if (prop.layout === "/admin") {
         return (
-          <PrivateRoute
+          <Route
             path={prop.layout + prop.path}
-            Component={prop.component}
+            component={prop.component}
             loggedIn={loggedIn}
             key={key}
           />

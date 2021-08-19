@@ -25,7 +25,7 @@ function Sale() {
     const [currentProduct, setCurrentProduct] = useState({});
     const [selling_price, setSellingPrice] = useState(0);
     const [sellDetailsMode, setSellDetailsMode] = useState(false);
-    const [buyerDetail, setBuyerDetail] = useState({});
+    const [buyerDetail, setBuyerDetail] = useState({buyer_name:"",phone:"",payment_method:"",address:""});
     
     const [cart, setCart] = useState([]);
     const [notificationStatus, setNotificationStatus] = useState(false)
@@ -69,25 +69,31 @@ function Sale() {
           variation: temp.variations[temp.key].variation,
           price: selling_price > 0 ? selling_price: temp.variations[temp.key].selling_price
         };
-        const found = cart.some(el => el.product_id === currentProduct._id);
+        const found = (cart.findIndex(x => x.variation ===cartItem.variation && x.product_id===cartItem.product_id));
         
         //checking if item already exist in cart
-        if(found){
-          setCart(cart.filter(item => !variartionCheck(item,cartItem.variation,cartItem.product_id)));
+        if(found>-1){
+          let newCart = [...cart]; 
+          newCart[found].quantity = cartItem.quantity;
+          newCart[found].price = cartItem.price;
+          setCart(newCart);
 
           setNotificationDetails({msg:"Item already already exist in cart, updated with new quantity", type:"info"});
           setNotificationStatus(true);
         }else{
+          setCart([...cart,cartItem]);
+          setCurrentProduct({...currentProduct,toBuy:1});
+
           setNotificationDetails({msg:"Item Added to Cart Successfully", type:"success"});
           setNotificationStatus(true);
         }
-        setCart([...cart,cartItem]);
-        setCurrentProduct({...currentProduct,toBuy:1});
+        
         setSellingPrice(0);
       }else{
         setNotificationDetails({msg:"Not Enough Items on Stock", type:"danger"});
         setNotificationStatus(true);
       }
+
     }
 
     const handleRemoveItem = (id,variation) => {
@@ -108,17 +114,23 @@ function Sale() {
     }
 
     async function addSale () {
-      const saleData = {...{...buyerDetail, items:cart}};
-      await axios.post(sale.addSale, saleData).then((res)=>{
-        if(res.data.status){
-          setNotificationDetails({msg:"Sale Successful", type:"success"});
-        }
-        else{
-          setNotificationDetails({msg:"Sale Unsuccessful, Please Refresh and Try Again!", type:"Danger"});
-        }
+      if(buyerDetail.buyer_name==="" || buyerDetail.phone==="" || buyerDetail.buyer_address==="" || buyerDetail.payment_method===""){
+        setNotificationDetails({msg:"Some Buyer Fields are Empty", type:"danger"});
         setNotificationStatus(true);
-      });
-    }
+      }else{
+        const saleData = {...{...buyerDetail, items:cart}};
+        await axios.post(sale.addSale, saleData).then((res)=>{
+          if(res.data.status){
+            setNotificationDetails({msg:"Sale Successful", type:"success"});
+            setCart([]);
+          }
+          else{
+            setNotificationDetails({msg:"Sale Unsuccessful, Please Refresh and Try Again!", type:"Danger"});
+          }
+          setNotificationStatus(true);
+        });
+      }
+  }
 
     
   const [q, setQ] = useState('');
@@ -207,7 +219,7 @@ function Sale() {
                           {(productItem.variations).map((variation,key) => 
                             <div key={key}>
                               <Button onClick={()=> selectProduct(productItem._id,key)} className="btn-fill" disabled={variation.quantity>0 ? false: true} style={{marginBottom:"5px", width:"100%"}} color="primary" type="submit">
-                                {variation.variation} - {symbol}{variation.selling_price}
+                                {variation.variation} - {symbol}{variation.selling_price.toLocaleString()}
                               </Button>
                             </div>
                           )}
@@ -285,7 +297,7 @@ function Sale() {
             }
           </Col>
           :
-          <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>setLoading(!loading)} className="btn-fill" color="primary">
+          <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>{setLoading(!loading); setSellDetailsMode(false)}} className="btn-fill" color="primary">
             <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Products </font>
           </Button>
           }
@@ -334,7 +346,7 @@ function Sale() {
                 </div>
               </CardBody>
               <CardFooter>
-                <Button onClick={()=>setSellDetailsMode(!sellDetailsMode)} className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
+                <Button onClick={()=>{setSellDetailsMode(!sellDetailsMode); setLoading(true)}} className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
                   {!sellDetailsMode?"Proceed":"Show Products"}
                 </Button>
               </CardFooter>
@@ -389,7 +401,7 @@ function Sale() {
                                   <FormGroup>
                                     Variation : {currentProduct.variations[currentProduct.key].variation} <br/>
                                     Model: {currentProduct.variations[currentProduct.key].model} <br/>
-                                    Selling Price: {currentProduct.variations[currentProduct.key].selling_price}
+                                    Selling Price: {currentProduct.variations[currentProduct.key].selling_price.toLocaleString()}
                                   </FormGroup>
                                 </Col>
                               </td>

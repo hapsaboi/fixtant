@@ -50,7 +50,38 @@ router.post('/add_sale', auth, async(req,res)=>{
 //@response - status: true or false | data | error
 router.get('/show_sales', auth, async (req, res) => {
 	const store = req.user.id;
-	const sale = await Sales.find({store});
+    let sale ;
+   
+    let duration = req.query.duration;
+    if(duration){ 
+        var d = new Date();
+        if(duration==='daily'){
+            sale = await Sales.find({store,
+                date: {
+                    "$gte":d.setDate(d.getDate()-7), 
+                    "$lt": new Date()
+                }
+            }).sort('date');
+        }else if(duration ==='weekly'){
+            var firstDay = new Date(d.getFullYear(), d.getMonth(), 2);
+            sale = await Sales.find({store,
+                date: {
+                    "$gte":firstDay, 
+                    "$lt": new Date()
+                }
+            }).sort('date');
+        }else if(duration==='monthly'){
+            var firstDayofYear = new Date(d.getFullYear(), 0, 2);
+            sale = await Sales.find({store,
+                date: {
+                    "$gte":firstDayOfYear, 
+                    "$lt": new Date()
+                }
+            }).sort('date');
+        }
+    }else{
+        sale = await Sales.find({store}).sort({date:-1});
+    };
 	try {
 		if (!sale){res.status(400).send({status:false, error:'Problem with the query'})};
 		res.status(200).send({status:true,data:sale});

@@ -140,7 +140,7 @@ function Products() {
                         tag="label"
                         className="btn-simple"
                         color="info"
-                        id={key}
+                        key={key}
                         size="sm"
                         onClick={() => {
                           const checked = searchColumns.includes(column);

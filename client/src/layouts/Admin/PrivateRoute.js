@@ -4,7 +4,7 @@ function PrivateRoute( {loggedIn,Component, ...rest }) {
 		<Route
 			{...rest}
 			render={(props) => {
-				if (loggedIn === true) return <Component />;
+				if (loggedIn === true) return <Component key={props.location.key}/>;
 				else {
 					return <Redirect to={{ pathname: '/', state: { from: props.location } }} />;
 				}

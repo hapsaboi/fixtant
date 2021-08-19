@@ -3,6 +3,8 @@ import { authenticate } from '../data/api';
 import Axios from 'axios';
 import GridLoader from "react-spinners/GridLoader";
 
+import { Redirect } from 'react-router-dom';
+
 const AuthContext = createContext();
 Axios.defaults.withCredentials = true;
 
@@ -19,8 +21,11 @@ function AuthContextProvider(props) {
 	async function getLoggedIn() {
 		Axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
 		const loggedInRes = await Axios.get(authenticate.loggedIn);
-		if (loggedInRes.data.reason==="Expired") {
-			Axios.get(authenticate.logout);
+
+		if (loggedInRes.data.status===false) {
+			window.localStorage.removeItem("token");
+			setLoggedIn(false);
+			<Redirect to="/" />;
 		}else{
 			setLoggedIn(loggedInRes.data);
 		}
@@ -29,16 +34,16 @@ function AuthContextProvider(props) {
 		() => {
 			Axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
 			Axios.get(authenticate.loggedIn).then((response) => {
-				if (response.data.reason==="Expired") {
-					Axios.get(authenticate.logout);
+				if (response.data.status===false) {
+					window.localStorage.removeItem("token");
 					setLoggedIn(false);
-					console.log(response.data)
+					<Redirect to="/" />;
 				}else{
 					//setting token to localStorage
 
 					Axios.get(authenticate.getUserData).then((user)=>{
 						setLoggedIn(response.data);
-						setUserDetail(user);	
+						setUserDetail(user.data);	
 					});
 					
 				}

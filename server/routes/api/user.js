@@ -116,7 +116,7 @@ router.get('/loggedIn', async (req, res) => {
 			res.status(200).send(false);
 		}else{
             jwt.verify(token, process.env.jwtSecret, function(err) {
-                if (err) {res.status(200).send({status:false, reason:"Expired"});}
+                if (err) {res.status(200).send({status:false});}
                 else{res.status(200).send(true)};
             })
             

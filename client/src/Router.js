@@ -13,22 +13,22 @@ function RouterComp() {
     const { loggedIn } = useAuth();
     return (
         <BrowserRouter>
-          <Switch>
+          
               {!loggedIn?
-                <>
-                    <Route exact path='/'> <Auth /> </Route>       
-                    <Route path='/accountverify/:verifyToken'> <VerifyAccount /> </Route>
-                    <Route path='/forgotpassword'> <ForgotPassword /> </Route>
-                    <Route path='/passwordreset/:resetToken'> <ResetPassword /> </Route>
-                    
-                </>
+                <Switch>
+                    <Route exact path="/" component={Auth} />       
+                    <Route path='/accountverify/:verifyToken' component={VerifyAccount} />
+                    <Route path='/forgotpassword' component={ForgotPassword} />
+                    <Route path='/passwordreset/:resetToken' component={ResetPassword} />
+                    <Route component={Auth}/>                
+                </Switch>
                 :
-                <>
+                <Switch>
                     <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-                    <Redirect from="/" to="/admin/dashboard" />
-                </>
+                    <Redirect to="/admin/dashboard/" />
+                </Switch>
               }            
-          </Switch>
+          
         </BrowserRouter>
     )
 }

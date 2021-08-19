@@ -1,37 +1,37 @@
 import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
-import { authenticate } from '../../data/api';
-import axios from 'axios';
-
+import { useAuth } from '../../contexts/AuthContext';
 // reactstrap components
 import {
-  Button,
   Collapse,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
-  Input,
-  InputGroup,
   NavbarBrand,
   Navbar,
   NavLink,
   Nav,
   Container,
-  Modal,
   NavbarToggler,
-  ModalHeader,
 } from "reactstrap";
 
 function AdminNavbar(props) {
   const [collapseOpen, setcollapseOpen] = React.useState(false);
-  const [modalSearch, setmodalSearch] = React.useState(false);
   const [color, setcolor] = React.useState("navbar-transparent");
+  const { getLoggedIn,userDetail } = useAuth();
 
   async function logout(){
-    await axios.get(authenticate.logout);
-  }
+    try{
+      window.localStorage.removeItem("token");
+      await getLoggedIn(); 
+    }catch(e){
+      alert(e);
+    }
+    
+  };
+
 
   React.useEffect(() => {
     window.addEventListener("resize", updateColor);
@@ -57,10 +57,7 @@ function AdminNavbar(props) {
     }
     setcollapseOpen(!collapseOpen);
   };
-  // this function is to open the Search modal
-  const toggleModalSearch = () => {
-    setmodalSearch(!modalSearch);
-  };
+
   return (
     <>
       <Navbar className={classNames("navbar-absolute", color)} expand="lg">
@@ -88,51 +85,7 @@ function AdminNavbar(props) {
           </NavbarToggler>
           <Collapse navbar isOpen={collapseOpen}>
             <Nav className="ml-auto" navbar>
-              <InputGroup className="search-bar">
-                <Button color="link" onClick={toggleModalSearch}>
-                  <i className="tim-icons icon-zoom-split" />
-                  <span className="d-lg-none d-md-block">Search</span>
-                </Button>
-              </InputGroup>
-              <UncontrolledDropdown nav>
-                <DropdownToggle
-                  caret
-                  color="default"
-                  data-toggle="dropdown"
-                  nav
-                >
-                  <div className="notification d-none d-lg-block d-xl-block" />
-                  <i className="tim-icons icon-sound-wave" />
-                  <p className="d-lg-none">Notifications</p>
-                </DropdownToggle>
-                <DropdownMenu className="dropdown-navbar" right tag="ul">
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Mike John responded to your email
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      You have 5 more tasks
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Your friend Michael is in town
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Another notification
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Another one
-                    </DropdownItem>
-                  </NavLink>
-                </DropdownMenu>
-              </UncontrolledDropdown>
+              <font style={{fontSize:"20px",padding:"7px"}}>{(userDetail.store)}</font>
               <UncontrolledDropdown nav>
                 <DropdownToggle
                   caret
@@ -147,7 +100,7 @@ function AdminNavbar(props) {
                     />
                   </div>
                   <b className="caret d-none d-lg-block d-xl-block" />
-                  <p className="d-lg-none">Log out</p>
+                  <p className="d-lg-none">Menu Details</p>
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
                   <NavLink tag="li">
@@ -167,22 +120,6 @@ function AdminNavbar(props) {
           </Collapse>
         </Container>
       </Navbar>
-      <Modal
-        modalClassName="modal-search"
-        isOpen={modalSearch}
-        toggle={toggleModalSearch}
-      >
-        <ModalHeader>
-          <Input placeholder="SEARCH" type="text" />
-          <button
-            aria-label="Close"
-            className="close"
-            onClick={toggleModalSearch}
-          >
-            <i className="tim-icons icon-simple-remove" />
-          </button>
-        </ModalHeader>
-      </Modal>
     </>
   );
 }
