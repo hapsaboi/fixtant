@@ -14,7 +14,8 @@ function LoginForm({ getLoggedIn }) {
 
 	async function loginFunc(e) {
 		e.preventDefault();
-		const loginData = { email, password };
+		let nemail = email.toLowerCase().replace(/ /g,'');
+		const loginData = { email:nemail, password };
 
 		try {
 			const { data } = await Axios.post(authenticate.userAuth, loginData);

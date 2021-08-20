@@ -16,7 +16,8 @@ function Register() {
         e.preventDefault();
 
         try {
-            const registerData = { name, email, phone, store, password };
+            let nemail = email.toLowerCase().replace(/ /g,'');
+            const registerData = { name, email:nemail, phone, store, password };
             const response = await Axios.post(authenticate.addUser, registerData);
             setMessage(response.data.msg + '.');
             setTimeout(() => {
