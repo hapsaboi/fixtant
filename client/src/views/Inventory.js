@@ -3,7 +3,7 @@ import axios from 'axios';
 import Notifications from "components/Notification/Notification";
 import { product } from '../data/api';
 import { FiArrowLeft } from "react-icons/fi";
-import {RiCreativeCommonsZeroFill} from "react-icons/ri";
+import empty from '../assets/img/inventory-empty.svg';
 
 // reactstrap components
 import {
@@ -27,6 +27,7 @@ function Inventory() {
   const [products, setProducts] = useState([]);
   const [currentProduct, setCurrentProduct] = useState({});
   const [temp, setTemp] = useState([]);
+  const [dataload, setDataLoad] = useState(true);
 
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
@@ -37,10 +38,12 @@ function Inventory() {
 				await axios.get(product.showStoreProducts).then((response)=>{
 					if(response.data.status===true){
             setProducts(response.data.data);
+            setDataLoad(false);
           }
           else{
             setNotificationDetails({msg:"Error Loading Inventory, Please Referesh The Page", type:"danger"});
             setNotificationStatus(true);
+            setDataLoad(false);
           }
 				})
 			}
@@ -52,11 +55,9 @@ function Inventory() {
     var new_variation=[]; 
     async function start(){
       new_variation = JSON.parse(JSON.stringify(temp));
-
       new_variation.forEach((variationItem,index)=>{   
         console.log(variationItem.quantity+" "+index);  
         variationItem.quantity+=currentProduct.variations[index].quantity;
-
       });
       
       setCurrentProduct({...currentProduct, variations:new_variation});
@@ -143,7 +144,7 @@ function Inventory() {
             <Card>
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Inventory</CardTitle>
-                <FormGroup className='pull-right'>
+                <FormGroup style={{width:"100%"}} className='pull-right'>
                   <Input
                     placeholder="Search based on checked items"
                     type='text'
@@ -181,46 +182,51 @@ function Inventory() {
                 </ButtonGroup>
               </Col>
                 
-              {!Object.keys(products).length === 0?
-              <CardBody>
-                <Table className="tablesorter" responsive style={{overflow:"unset"}}>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Product Name</th>
-                      <th>Variations - Quantity</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {search(result).map((productItem,key) => 
-                        <tr key={key}>
-                          <td>{productItem.product_name}</td>
-                          <td> 
-                            {productItem.variations.map((variation,key)=>(
-                              <div key={key}>{variation.variation}: {variation.quantity} 
-                                <div style={{float:"right", backgroundColor: variation.quantity>lowQuantity ? "green" : "red", width:"20px", height:"15px"}}></div>
+              {dataload===false?
+                <>
+                {products.length > 0?
+                <CardBody>
+                  <Table className="tablesorter" responsive style={{overflow:"unset"}}>
+                    <thead className="text-primary">
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Variations - Quantity</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {search(result).map((productItem,key) => 
+                          <tr key={key}>
+                            <td>{productItem.product_name}</td>
+                            <td> 
+                              {productItem.variations.map((variation,key)=>(
+                                <div key={key}>{variation.variation}: {variation.quantity} 
+                                  <div style={{float:"right", backgroundColor: variation.quantity>lowQuantity ? "green" : "red", width:"20px", height:"15px"}}></div>
+                                </div>
+                              ))}
+                            
+                            </td>
+                            <td>
+                              <div>
+                                <Button onClick={()=> selectProduct(productItem._id,key)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">
+                                  Show Inventory
+                                </Button>
                               </div>
-                            ))}
-                          
-                          </td>
-                          <td>
-                            <div>
-                              <Button onClick={()=> selectProduct(productItem._id,key)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">
-                                Show Inventory
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                    )}
-                  </tbody>
-                </Table>
-              </CardBody>
+                            </td>
+                          </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                </CardBody>
+                :
+                <div style={{textAlign: "center",padding:"20px"}}> 
+                  <img src={empty} style={{marginBottom:"30px"}} height="250px"  alt="Nothing to show yet"/><br />
+                  <CardTitle tag="h4"> Nothing To Show Yet... Add some products to the system in order to manage invenotry</CardTitle>
+                </div>  
+                }
+                </>
               :
-              <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
-                <RiCreativeCommonsZeroFill size={200} /><br />
-                Nothing To Show Yet...
-                Add Some Products to The System
-              </div>  
+              "Loading"
               }
             </Card>
             :
@@ -320,7 +326,7 @@ function Inventory() {
       
                     </CardBody>
                   )
-                : "Loading"
+                : "------------------------"
               }
             </Card>
         

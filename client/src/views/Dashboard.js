@@ -6,9 +6,7 @@ import Notifications from "components/Notification/Notification";
 import moment from "moment";
 
 import DailySalesChart from "components/DashboardComponents/DailySalesChart";
-import { BsBarChartFill } from "react-icons/bs";
-import {RiCreativeCommonsZeroFill} from "react-icons/ri";
-
+import salesicon from '../assets/img/sales.svg';
 // reactstrap components
 import {
   Card,
@@ -26,6 +24,7 @@ function Dashboard() {
 
   const [sales, setSales] = useState({});
   const [today, setToday] = useState([]);
+  const [dataload, setDataLoad] = useState(true);
 
   useEffect(
     () => {
@@ -36,11 +35,13 @@ function Dashboard() {
                 let data = response.data.data;
                 setToday(data.filter(obj => moment().isSame(obj.date, 'day')));
                 setSales({daily:data});
+                setDataLoad(false);
             }; 
           }
           else{
             setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
             setNotificationStatus(true);
+            setDataLoad(false);
           }
         })
       }
@@ -54,15 +55,20 @@ function Dashboard() {
       <div className="content">
         <Row>
           <Col xs="12">
-            {Object.keys(sales).length>0?<DailySalesChart sales={sales} setSales={setSales} />
+            {dataload===false?
+              <>
+              {Object.keys(sales).length>0?<DailySalesChart sales={sales} setSales={setSales} />
+              :
+              <Card className="card">
+                <div style={{textAlign: "center",padding:"20px"}}> 
+                <img  style={{marginBottom:"20px"}} src={salesicon} height="250px"  alt="Nothing to show yet"/><br />
+                <CardTitle tag="h4">Nothing To Show Yet... Make Some Sales to See Graphs</CardTitle>
+                </div>
+              </Card>
+              }
+              </>
             :
-            <Card className="card">
-              <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
-                <BsBarChartFill size={200} /><br />
-                Nothing To Show Yet...
-                Make Some Sales to See Graphs
-              </div>
-            </Card>
+            "Loading"
             }
           </Col>
         </Row>
@@ -102,9 +108,9 @@ function Dashboard() {
                   </Table>
                 :
                 <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
-                  <RiCreativeCommonsZeroFill size={200} /><br />
-                  Nothing To Show Yet...
-                  Make Some Sales to See Data
+                  {/* <RiCreativeCommonsZeroFill size={200} /><br /> */}
+                  <CardTitle tag="h4">Nothing To Show Yet... Make Some Sales to See Data</CardTitle>
+                  
                 </div>  
                 }
                 </div>

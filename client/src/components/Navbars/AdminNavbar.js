@@ -85,7 +85,11 @@ function AdminNavbar(props) {
           </NavbarToggler>
           <Collapse navbar isOpen={collapseOpen}>
             <Nav className="ml-auto" navbar>
+            {userDetail? 
               <font style={{fontSize:"20px",padding:"7px"}}>{(userDetail.store)}</font>
+              :
+              null
+            }
               <UncontrolledDropdown nav>
                 <DropdownToggle
                   caret

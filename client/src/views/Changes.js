@@ -228,7 +228,7 @@ function Changes() {
       
                     </CardBody>
                   )
-                : "Loading"
+                : ""
               }
             </Card>
         

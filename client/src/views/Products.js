@@ -4,7 +4,7 @@ import { product } from '../data/api';
 import { FaTrashAlt } from 'react-icons/fa';
 import Notifications from "components/Notification/Notification";
 import { FiArrowLeft } from "react-icons/fi";
-import {RiCreativeCommonsZeroFill} from "react-icons/ri";
+import empty from '../assets/img/product.svg';
 // reactstrap components
 import {
   Card,
@@ -28,16 +28,20 @@ function Products() {
 
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
+  const [dataload, setDataLoad] = useState(true);
 
   useEffect(
 		() => {
 			async function fetchProducts() {
 				await axios.get(product.showStoreProducts).then((response)=>{
 					if(response.data.status===true){
-            setProducts(response.data.data);}
+            setProducts(response.data.data);
+            setDataLoad(false);
+          }
           else{
             setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
             setNotificationStatus(true);
+            setDataLoad(false);
           }
 				})
 			}
@@ -120,12 +124,13 @@ function Products() {
             <Card>
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Products</CardTitle> 
-                <FormGroup className='pull-right'>
+                <FormGroup style={{width:"100%"}} className='pull-right'>
                   <Input
                     placeholder="Search based on checked items"
                     type='text'
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
+                    
                   />
                 </FormGroup>
               </CardHeader>
@@ -157,41 +162,46 @@ function Products() {
                   ))}
                 </ButtonGroup>
               </Col>
-              { !Object.keys(products).length === 0? 
-              <CardBody>
-                <Table className="tablesorter" responsive style={{overflow:"unset"}}>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Product Name</th>
-                      <th>Brand</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {search(result).map((row,key) => (
-                      <tr key={key}>
-                        {columns.map((column,key) => (
-                          <>{key>0?<td key={key}>{row[column]} </td>:null}</>
+              {dataload===false?
+                <>
+                {products.length > 0? 
+                  <CardBody>
+                    <Table className="tablesorter" responsive style={{overflow:"unset"}}>
+                      <thead className="text-primary">
+                        <tr>
+                          <th>Product Name</th>
+                          <th>Brand</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {search(result).map((row,key) => (
+                          <tr key={key}>
+                            {columns.map((column,key) => (
+                              <>{key>0?<td key={key}>{row[column]} </td>:null}</>
+                            ))}
+                            <td>
+                              <div>
+                                <Button onClick={()=> selectProduct(row._id)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">
+                                  Show
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
                         ))}
-                        <td>
-                          <div>
-                            <Button onClick={()=> selectProduct(row._id)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">
-                              Show
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </CardBody>
+                      </tbody>
+                    </Table>
+                  </CardBody>
+                :
+                  <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
+                    <img src={empty} style={{marginBottom:"30px"}} height="250px"  alt="Nothing to show yet"/><br />
+                    <CardTitle tag="h4">Nothing To Show Yet... Add Some Products to The System</CardTitle>
+                  </div>  
+                } 
+                </>
               :
-              <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
-                <RiCreativeCommonsZeroFill size={200} /><br />
-                Nothing To Show Yet...
-                Add Some Products to The System
-              </div>  
-              } 
+                "Loading"
+              }
             </Card>
             :
               <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>setLoading(!loading)} className="btn-fill" color="primary">
@@ -344,7 +354,7 @@ function Products() {
       
                     </CardBody>
                   )
-                : "Loading"
+                : "--------------------------------"
               }
             </Card>
         

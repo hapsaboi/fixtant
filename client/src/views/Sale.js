@@ -164,7 +164,7 @@ function Sale() {
             <Card>
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Products</CardTitle>
-                <FormGroup className='pull-right'>
+                <FormGroup style={{width:"100%"}} className='pull-right'>
                   <Input
                     placeholder="Search based on checked items"
                     type='text'
@@ -443,7 +443,7 @@ function Sale() {
       
                     </CardBody>
                 ))
-                : "Loading"
+                : ""
               }
             </Card>
         
