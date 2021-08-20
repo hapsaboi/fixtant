@@ -62,7 +62,6 @@ router.get('/show_sales', auth, async (req, res) => {
                     "$lt": new Date()
                 }
             }).sort('date');
-            console.log(sale);
         }else if(duration ==='weekly'){
             var firstDay = new Date(d.getFullYear(), d.getMonth(), 2);
             sale = await Sales.find({store,

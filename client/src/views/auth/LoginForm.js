@@ -13,8 +13,9 @@ function LoginForm({ getLoggedIn }) {
 	const history = useHistory();
 
 	async function loginFunc(e) {
+		setMessage("");
 		e.preventDefault();
-		let nemail = email.toLowerCase().replace(/ /g,'');
+		let nemail = (email.toLowerCase()).replace(/ /g,'');
 		const loginData = { email:nemail, password };
 
 		try {
