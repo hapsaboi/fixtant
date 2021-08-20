@@ -235,7 +235,7 @@ function DailySalesChart({sales,setSales}) {
                     Daily
                   </span>
                   <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-single-02" />
+                    Daily
                   </span>
                 </Button>
                 <Button
@@ -252,7 +252,7 @@ function DailySalesChart({sales,setSales}) {
                     Weekly
                   </span>
                   <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-gift-2" />
+                    Weekly
                   </span>
                 </Button>
                 <Button
@@ -269,7 +269,7 @@ function DailySalesChart({sales,setSales}) {
                     Monthly
                   </span>
                   <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-tap-02" />
+                    Monthly
                   </span>
                 </Button>
               </ButtonGroup>
@@ -312,7 +312,7 @@ function DailySalesChart({sales,setSales}) {
                     Daily
                   </span>
                   <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-single-02" />
+                    Daily
                   </span>
                 </Button>
                 <Button
@@ -329,7 +329,7 @@ function DailySalesChart({sales,setSales}) {
                     Weekly
                   </span>
                   <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-gift-2" />
+                    Weekly
                   </span>
                 </Button>
                 <Button
@@ -346,7 +346,7 @@ function DailySalesChart({sales,setSales}) {
                     Monthly
                   </span>
                   <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-tap-02" />
+                    Monthly
                   </span>
                 </Button>
               </ButtonGroup>

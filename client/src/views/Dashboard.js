@@ -33,9 +33,11 @@ function Dashboard() {
 					if(response.data.status===true){
             if(response.data.data.length>0){
                 let data = response.data.data;
-                setToday(data.filter(obj => moment().isSame(obj.date, 'day')));
                 setSales({daily:data});
+                setToday(data.filter(obj => moment().isSame(obj.date, 'day')));
+                
             }; 
+            setDataLoad(false);
           }
           else{
             setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
@@ -44,7 +46,6 @@ function Dashboard() {
         })
       }
 			fetchSales();
-      setDataLoad(false);
     },
   []);
   // {date:{$gte:ISODate("2021-01-01"),$lt:ISODate("2020-05-01"}}
@@ -56,7 +57,6 @@ function Dashboard() {
           <Col xs="12">        
             {dataload===false?
               <>
-      
               {Object.keys(sales).length>0?
                 <DailySalesChart sales={sales} setSales={setSales} />
               :

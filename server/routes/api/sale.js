@@ -50,7 +50,7 @@ router.post('/add_sale', auth, async(req,res)=>{
 //@response - status: true or false | data | error
 router.get('/show_sales', auth, async (req, res) => {
 	const store = req.user.id;
-    let sale ;
+    let sale;
    
     let duration = req.query.duration;
     if(duration){ 
@@ -62,6 +62,7 @@ router.get('/show_sales', auth, async (req, res) => {
                     "$lt": new Date()
                 }
             }).sort('date');
+            console.log(sale);
         }else if(duration ==='weekly'){
             var firstDay = new Date(d.getFullYear(), d.getMonth(), 2);
             sale = await Sales.find({store,
@@ -74,7 +75,7 @@ router.get('/show_sales', auth, async (req, res) => {
             var firstDayofYear = new Date(d.getFullYear(), 0, 2);
             sale = await Sales.find({store,
                 date: {
-                    "$gte":firstDayOfYear, 
+                    "$gte":firstDayofYear, 
                     "$lt": new Date()
                 }
             }).sort('date');
