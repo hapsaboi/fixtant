@@ -35,17 +35,16 @@ function Dashboard() {
                 let data = response.data.data;
                 setToday(data.filter(obj => moment().isSame(obj.date, 'day')));
                 setSales({daily:data});
-                setDataLoad(false);
             }; 
           }
           else{
             setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
             setNotificationStatus(true);
-            setDataLoad(false);
           }
         })
       }
 			fetchSales();
+      setDataLoad(false);
     },
   []);
   // {date:{$gte:ISODate("2021-01-01"),$lt:ISODate("2020-05-01"}}
@@ -54,21 +53,23 @@ function Dashboard() {
       {notificationStatus === true ? <Notifications details={notificationDetails}  />:null}
       <div className="content">
         <Row>
-          <Col xs="12">
+          <Col xs="12">        
             {dataload===false?
               <>
-              {Object.keys(sales).length>0?<DailySalesChart sales={sales} setSales={setSales} />
+      
+              {Object.keys(sales).length>0?
+                <DailySalesChart sales={sales} setSales={setSales} />
               :
-              <Card className="card">
-                <div style={{textAlign: "center",padding:"20px"}}> 
-                <img  style={{marginBottom:"20px"}} src={salesicon} height="250px"  alt="Nothing to show yet"/><br />
-                <CardTitle tag="h4">Nothing To Show Yet... Make Some Sales to See Graphs</CardTitle>
-                </div>
-              </Card>
+                <Card className="card">
+                  <div style={{textAlign: "center",padding:"20px"}}> 
+                  <img  style={{marginBottom:"20px"}} src={salesicon} height="250px"  alt="Nothing to show yet"/><br />
+                  <CardTitle tag="h4">Nothing To Show Yet... Make Some Sales to See Graphs</CardTitle>
+                  </div>
+                </Card>
               }
               </>
             :
-            "Loading"
+              "Loading"
             }
           </Col>
         </Row>
