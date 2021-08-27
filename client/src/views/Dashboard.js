@@ -83,7 +83,7 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="table-full-width table-responsive">
-                {!Object.keys(today).length === 0? 
+                {today.length>0? 
                   <Table>
                     <tbody>
                       {today.map((saleItem,key) => 
@@ -111,7 +111,6 @@ function Dashboard() {
                 <div style={{color: "#39B54A", textAlign: "center",padding:"20px"}}> 
                   {/* <RiCreativeCommonsZeroFill size={200} /><br /> */}
                   <CardTitle tag="h4">Nothing To Show Yet... Make Some Sales to See Data</CardTitle>
-                  
                 </div>  
                 }
                 </div>
