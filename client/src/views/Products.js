@@ -5,6 +5,7 @@ import { FaTrashAlt } from 'react-icons/fa';
 import Notifications from "components/Notification/Notification";
 import { FiArrowLeft } from "react-icons/fi";
 import empty from '../assets/img/product.svg';
+import { Link } from "react-router-dom";
 // reactstrap components
 import {
   Card,
@@ -124,6 +125,13 @@ function Products() {
             <Card>
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Products</CardTitle> 
+                <div className="pull-right" style={{marginBottom:'20px'}}> 
+                    <Link to="/admin/addservice">
+                        <Button  className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
+                            Add Product
+                        </Button>
+                    </Link>
+                </div> 
                 <FormGroup style={{width:"100%"}} className='pull-right'>
                   <Input
                     placeholder="Search based on checked items"

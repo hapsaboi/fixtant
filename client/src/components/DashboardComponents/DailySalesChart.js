@@ -213,7 +213,7 @@ function DailySalesChart({sales,setSales}) {
         <CardHeader>
           <Row>
             <Col className="text-left" sm="6">
-              <h5 className="card-category">{bigChartData} Sales</h5>
+              <h5 className="card-category">{bigChartData} Sales/Services</h5>
               <CardTitle tag="h2">Quantity Sold</CardTitle>
             </Col>
             <Col sm="6">
@@ -290,7 +290,7 @@ function DailySalesChart({sales,setSales}) {
         <CardHeader>
           <Row>
             <Col className="text-left" sm="6">
-              <h5 className="card-category">{bigChartData} Sales</h5>
+              <h5 className="card-category">{bigChartData} Sales/Services</h5>
               <CardTitle tag="h2">Cash Inflow</CardTitle>
             </Col>
             <Col sm="6">

@@ -137,10 +137,7 @@ async function updateProductChange(product,updatedProduct) {
    
 }
 
-
-
 // for users
-
 async function addUser(user) {
     let store = user.store;
     var userChange = {
@@ -195,5 +192,61 @@ async function editProfileChange(userData,updatedData){
     }
 }
 
+
+// for services
+async function addService(service) {
+    let store = service.store;
+    var serviceChange = {
+        data:{
+            "type": "Add",
+            "message" : "Service with name: <b>"+service.service_name+"</b> was added",
+            "item_id": service._id, 
+        },
+        store  
+    }
+    
+    const change = await Changes.find({store});
+    if(change.length>0){
+        change[0].data.push(serviceChange.data);
+        await Changes.findOneAndUpdate({store},change[0]);
+    }else{    
+        const newChange = new Changes(serviceChange);
+        await newChange.save(); 
+    }
+
+    return serviceChange;
+
+}
+
+async function editServiceChange(serviceData,updatedServiceData){
+    let difference = diff(serviceData,updatedServiceData);
+    let store = updatedServiceData.store;
+
+    if(difference.messages!=""){
+        var serviceChange = {
+            data:{
+                "type": difference.type,
+                "message" : difference.messages.toString().replace(/,/g, ""),
+                "item_id": updatedServiceData._id   
+            },
+            store  
+        }
+
+        const change = await Changes.find({store});
+        if(change.length>0){
+            change[0].data.push(serviceChange.data);
+            await Changes.findOneAndUpdate({store},change[0]);
+        }else{    
+            const newChange = new Changes(serviceChange);
+            await newChange.save(); 
+        }
+        //Changes Made Successfully
+        return("CMS");
+    }else{
+         //No Changes Made
+        return("NCM");
+    }
+}
+
 // To export above functions:
-module.exports = {addProduct,updateProductChange,addUser,editProfileChange};
+module.exports = {addProduct,updateProductChange,addUser,editProfileChange, addService, editServiceChange};

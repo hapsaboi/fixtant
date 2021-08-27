@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from "react";
-import { sale,product } from '../data/api';
+import { service,sale } from '../data/api';
 import axios from 'axios';
 import Notifications from "components/Notification/Notification";
 import 'boxicons';
@@ -19,11 +19,11 @@ import {
   Input,FormGroup,ButtonGroup
 } from "reactstrap";
 
-function Sale() {
+function SaleService() {
     let symbol = "₦";
-    const [products, setProducts ] = useState([]);      
-    const [currentProduct, setCurrentProduct] = useState({});
-    const [selling_price, setSellingPrice] = useState(0);
+    const [services, setServices ] = useState([]);      
+    const [currentService, setCurrentService] = useState({});
+    const [price, setPrice] = useState(0);
     const [sellDetailsMode, setSellDetailsMode] = useState(false);
     const [buyerDetail, setBuyerDetail] = useState({buyer_name:"",phone:"",payment_method:"",address:""});
     
@@ -35,109 +35,88 @@ function Sale() {
 
     useEffect(
       () => {
-        async function fetchProducts() {
-          await axios.get(product.showStoreProducts).then((response)=>{
-            if(response.data.status===true){setProducts(response.data.data);}
+        async function fetchServices() {
+          await axios.get(service.showStoreServices).then((response)=>{
+            if(response.data.status===true){setServices(response.data.data);}
             else{
-              setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
+              setNotificationDetails({msg:"Error Loading Services, Please Referesh The Page", type:"danger"});
               setNotificationStatus(true);
             }
           })
         }
-        fetchProducts();
+        fetchServices();
       },
     []);
     
-    function selectProduct (id,key) {
+    function selectService (id) {
       setLoading(true);
-      let sP = (products.filter(item => item._id === id))[0];
-      sP.key = key;
-      setCurrentProduct({...sP, selling_price:0});
+      let sP = (services.filter(item => item._id === id))[0];
+      setCurrentService({...sP});
       setLoading(false);
     }    
 
     function addToCart () {
 
-      let temp = currentProduct;
-      let toBuy = temp.toBuy ? temp.toBuy : 1;
-
-      if(toBuy <= temp.variations[temp.key].quantity){  
+        let temp = currentService;
+        let toBuy = temp.toBuy ? temp.toBuy : 1;
+        
         let cartItem = {
-          product_id:temp._id,
-          product_name:temp.product_name,
-          quantity:toBuy,
-          variation: temp.variations[temp.key].variation,
-          price: selling_price > 0 ? selling_price: temp.variations[temp.key].selling_price
+            product_id:temp._id,
+            product_name:temp.service_name,
+            quantity:toBuy,
+            price: price > 0 ? price: temp.price
         };
-        const found = (cart.findIndex(x => x.variation ===cartItem.variation && x.product_id===cartItem.product_id));
+        const found = (cart.findIndex(x => x.product_id===cartItem.product_id));
         
         //checking if item already exist in cart
         if(found>-1){
-          let newCart = [...cart]; 
-          newCart[found].quantity = cartItem.quantity;
-          newCart[found].price = cartItem.price;
-          setCart(newCart);
+            let newCart = [...cart]; 
+            newCart[found].quantity = cartItem.quantity;
+            newCart[found].price = cartItem.price;
+            setCart(newCart);
 
-          setNotificationDetails({msg:"Item already already exist in cart, updated with new quantity", type:"info"});
-          setNotificationStatus(true);
-        }else{
-          setCart([...cart,cartItem]);
-          setCurrentProduct({...currentProduct,toBuy:1});
+            setNotificationDetails({msg:"Item already already exist in cart, updated with new quantity", type:"info"});
+            setNotificationStatus(true);
+            }else{
+            setCart([...cart,cartItem]);
+            setCurrentService({...currentService,toBuy:1});
 
-          setNotificationDetails({msg:"Item Added to Cart Successfully", type:"success"});
-          setNotificationStatus(true);
+            setNotificationDetails({msg:"Item Added to Cart Successfully", type:"success"});
+            setNotificationStatus(true);
         }
         
-        setSellingPrice(0);
-      }else{
-        setNotificationDetails({msg:"Not Enough Items on Stock", type:"danger"});
-        setNotificationStatus(true);
-      }
-
+        setPrice(0);
     }
+    
 
-    const handleRemoveItem = (id,variation) => {
-      setCart(cart.filter(item =>  !variartionCheck(item,variation,id)));
+    const handleRemoveItem = (id) => {
+      setCart(cart.filter(item =>  !(id === item.product_id)));
 
       setNotificationDetails({msg:"Item Removed From Cart Successfully", type:"success"});
       setNotificationStatus(true);
     };
 
-    const variartionCheck = (item, variation,id) =>{
-      if(id === item.product_id){
-        console.log((item.variation === variation));
-        return (item.variation === variation);
-      }       
-      else{
-        return false;
-      } 
-    }
 
     async function addSale (details) {
-
       if(cart.length>0){
-        if((buyerDetail.buyer_name==="" || buyerDetail.phone==="" || buyerDetail.buyer_address==="" || buyerDetail.payment_method==="") && details.details===true){
+        if((buyerDetail.buyer_name==="" || buyerDetail.phone==="" || buyerDetail.buyer_address==="" || buyerDetail.payment_method==="")  && details.details===true){
           setNotificationDetails({msg:"Some Buyer Fields are Empty", type:"danger"});
           setNotificationStatus(true);
         }else{
-          let saleData;
-          if(details===true){
-            saleData = {...{...buyerDetail, items:cart}, type:"sale"};
-          }else{
-            saleData = {...{items:cart, payment_method:`${buyerDetail.payment_method}`}, type:"sale"};
-          }
+          const saleData = {...{...buyerDetail, items:cart, type:"service"}};
           await axios.post(sale.addSale, saleData).then((res)=>{
             if(res.data.status){
               setNotificationDetails({msg:"Sale Successful", type:"success"});
               setCart([]);
             }
             else{
-              setNotificationDetails({msg:"Sale Unsuccessful, Please Refresh and Try Again!", type:"danger"});
+              setNotificationDetails({msg:"Sale Unsuccessful, Please Refresh and Try Again!", type:"Danger"});
             }
             setNotificationStatus(true);
           });
         }
-      }else{
+      }
+      else{
         setNotificationDetails({msg:"Sale Unsuccessful, Cart is Empty!", type:"danger"});
         setNotificationStatus(true);
       }
@@ -146,8 +125,8 @@ function Sale() {
     
   const [q, setQ] = useState('');
   const [searchColumns, setSearchColumns] = useState([
-    'product_name',
-    'brand',
+    'service_name',
+    'price',
   ]);
 
   function search(rows) {
@@ -161,7 +140,7 @@ function Sale() {
       ),
     );
   }
-  const result = products.map(({_id,product_name,brand,variations}) => ({_id,product_name,brand,variations}));
+  const result = services.map(({_id,service_name,price}) => ({_id,service_name,price}));
   const columns = result[0] && Object.keys(result[0]);
 
   return (
@@ -174,7 +153,7 @@ function Sale() {
             {!sellDetailsMode ? 
             <Card>
               <CardHeader>
-                <CardTitle  className='pull-left' tag="h4">Products</CardTitle>
+                <CardTitle  className='pull-left' tag="h4">Services</CardTitle>
                 <FormGroup style={{width:"100%"}} className='pull-right'>
                   <Input
                     placeholder="Search based on checked items"
@@ -216,24 +195,21 @@ function Sale() {
                 <Table className="tablesorter" responsive>
                   <thead className="text-primary">
                     <tr>
-                      <th>Product</th>
-                      <th>Brand</th>
-                      <th>Variation - Price</th>
+                      <th>Service</th>
+                      <th>Price</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {search(result).map((productItem,key) => 
+                    {search(result).map((serviceItem,key) => 
                         <tr key={key}>
-                          <td>{productItem.product_name}</td>
-                          <td>{productItem.brand}</td>
+                          <td>{serviceItem.service_name}</td>
                           <td>
-                          {(productItem.variations).map((variation,key) => 
-                            <div key={key}>
-                              <Button onClick={()=> selectProduct(productItem._id,key)} className="btn-fill" disabled={variation.quantity>0 ? false: true} style={{marginBottom:"5px", width:"100%"}} color="primary" type="submit">
-                                {variation.variation} - {symbol}{variation.selling_price.toLocaleString()}
+                            <div>
+                              <Button onClick={()=> selectService(serviceItem._id)} className="btn-fill" style={{marginBottom:"5px", width:"100%"}} color="primary" type="submit">
+                                {symbol}{serviceItem.price.toLocaleString()}
                               </Button>
                             </div>
-                          )}
+                        
                           </td>
                         </tr>
                     )}
@@ -304,6 +280,7 @@ function Sale() {
                   </Col>
                   
                 </Row>
+
                 <Row style={{paddingLeft:"15px"}}>
                   <Button onClick={()=>addSale({details:true})} className="btn-fill " color="primary" type="submit">
                     Finalize Sale
@@ -318,7 +295,7 @@ function Sale() {
           </Col>
           :
           <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>{setLoading(!loading); setSellDetailsMode(false)}} className="btn-fill" color="primary">
-            <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Products </font>
+            <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Services </font>
           </Button>
           }
           <Col md="4">
@@ -343,7 +320,7 @@ function Sale() {
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
                       <tr>
-                        <th>Product</th>
+                        <th>Service</th>
                         <th>Quantity</th>
                         <th>Price</th>
                         <th className="text-center">Action</th>
@@ -356,7 +333,7 @@ function Sale() {
                           <td className="text-center">{cartItem.quantity}</td>
                           <td className="text-center">{cartItem.price}</td>
                           <td className="text-center">
-                            <font color="red" size="+2" onClick={()=>handleRemoveItem(cartItem.product_id,cartItem.variation)} style={{verticalAlign:"middle", cursor:"pointer"}}>x</font>  
+                            <font color="red" size="+2" onClick={()=>handleRemoveItem(cartItem.product_id)} style={{verticalAlign:"middle", cursor:"pointer"}}>x</font>  
                           </td>
                         </tr>
                         )
@@ -367,16 +344,16 @@ function Sale() {
               </CardBody>
               <CardFooter>
                 <Button onClick={()=>{setSellDetailsMode(!sellDetailsMode); setLoading(true)}} className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
-                  {!sellDetailsMode?"Proceed":"Show Products"}
+                  {!sellDetailsMode?"Proceed":"Show Services"}
                 </Button>
               </CardFooter>
             </Card>
           </Col>
           <Col md="8">
             <Card className="card-user">
-              {loading === false? 
+              {loading === false ? 
                 (
-                  [currentProduct.variations[currentProduct.key]].map((cP,key) => 
+                  [currentService].map((cS,key) => 
                     <CardBody key={key}>
                       <CardText />
                       <div className="row">
@@ -390,8 +367,8 @@ function Sale() {
                           <Input
                             placeholder="5"
                             type="number"
-                            value={selling_price}
-                            onChange={(e) => setSellingPrice(e.target.value)}
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
                           />
                         </div>
                       </div>
@@ -406,61 +383,21 @@ function Sale() {
                           </thead>
                           <tbody>
                             <tr>
-                              <td>Product Name</td>
-                              <td><h5 className="title"> {currentProduct.product_name} </h5></td>
+                              <td>Service Name</td>
+                              <td><h5 className="title"> {currentService.service_name} </h5></td>
                             </tr>
                            <tr>
-                              <td>Brand Name</td>
-                              <td><h5 className="title"> {currentProduct.brand} </h5></td>
+                              <td>Service Price</td>
+                              <td><h5 className="title"> {currentService.price} </h5></td>
                             </tr>
                             <tr>
-                              <td>Product Description</td>
-                              <td><h5 className="title"> {currentProduct.product_desc} </h5></td>
+                              <td>Service Description</td>
+                              <td><h5 className="title"> {currentService.service_desc} </h5></td>
                             </tr>
                           
                           </tbody>
                         </Table>
                         <hr />
-                        <Table className="tablesorter" responsive>
-                          <thead className="text-primary">
-                            <tr>
-                              <th>Variation</th>
-                              <th>Quantity</th>
-                              <th>Sell</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
-                                <Col className="pr-md-1" md="12">
-                                  <FormGroup>
-                                    Variation : {currentProduct.variations[currentProduct.key].variation} <br/>
-                                    Model: {currentProduct.variations[currentProduct.key].model} <br/>
-                                    Selling Price: {currentProduct.variations[currentProduct.key].selling_price.toLocaleString()}
-                                  </FormGroup>
-                                </Col>
-                              </td>
-                                
-                              <td>
-                                  Available Quantity: {currentProduct.variations[currentProduct.key].quantity}
-                
-                              </td>
-                              <td>
-                                <Col md="12">
-                                  <label>Quantity to Sell: </label>
-                                  <Input
-                                    placeholder="5"
-                                    type="number"
-                                    value={currentProduct.toBuy ? currentProduct.toBuy:1}
-                                    onChange={(e) => setCurrentProduct({...currentProduct,toBuy:e.target.value})}
-                                  />
-                                </Col>
-                              </td>
-                            </tr>
-                           
-                          </tbody>
-                        </Table>
-                  
                       </div>
       
                     </CardBody>
@@ -476,4 +413,4 @@ function Sale() {
   );
 }
 
-export default Sale;
+export default SaleService;

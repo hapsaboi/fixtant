@@ -1,7 +1,7 @@
 const BackEnd = process.env.REACT_APP_BackEndHost;
 
 export const product = {
-	//take in a body with data
+	//takes in a body with data
 	//data :  
 	// {
 	// 	"product_name":"Tecno Camon CX",
@@ -37,6 +37,34 @@ export const product = {
 	//---------------------------------------------------------------------------------------------------
 };
 
+export const service = {
+	//take in a body with data
+	//data :  
+	// {
+	// 	"product_name":"Screen Repair",
+	// 	"product_desc":"This involves screen repair for mobile phones",
+	// 	"price":"1000",
+	// 	"store":"StoreID?"
+	// }
+	addService: `${BackEnd}/api/service/add_service`,
+
+	//---------------------------------------------------------------------------------------------------
+
+	//data : store
+	// {
+	// 	"store":"StoreID?"
+	// }
+	showStoreServices: `${BackEnd}/api/service/show_store_services`,
+	//---------------------------------------------------------------------------------------------------
+	
+	//data : service in JSON format
+	// {
+	// 	 -----
+	// }
+	updateService: `${BackEnd}/api/service/update_service`,
+	//---------------------------------------------------------------------------------------------------
+};
+
 export const sale = {
 	//take in a body with data
 	//data :  
@@ -45,6 +73,7 @@ export const sale = {
 	//     "phone":"09094******",
 	//     "address":"Karewa Masakare",
 	//     "payment_method":"Cash",
+	// 	   "type":"sale || service"
 	//     "items":[
 	//          {"product_id":"60f71403c5b8cf2294520538","product_name":"Tecno Camon","quantity":10,"variation":"Medium","store":"Hive Store",price":20000}
 	//      ]
@@ -54,7 +83,7 @@ export const sale = {
 
 	//data : store
 	// {
-	// 	"store":"Hanis Store"
+	// 	"type":"sale || service",
 	// }
 	showSales: `${BackEnd}/api/sale/show_sales`,
 	//---------------------------------------------------------------------------------------------------

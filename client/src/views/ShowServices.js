@@ -20,19 +20,19 @@ import {
   CardText
 } from "reactstrap";
 
-function ShowSales() {
-  const [sales, setSales] = useState([]);
-  const [currentSale, setCurrentSale] = useState({});
+function ShowServices() {
+  const [services, setServices] = useState([]);
+  const [currentService, setCurrentService] = useState({});
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
 
   useEffect(
 		() => {
-			async function fetchSales() {
-				await axios.get(sale.showSales).then((response)=>{
-					if(response.data.status===true){
+			async function fetchServices() {
+				await axios.get(sale.showSales, {params:{type:'service'}}).then((response)=>{
+		      if(response.data.status===true){
             if(response.data.data.length>0){
-                setSales((response.data.data));
+                setServices((response.data.data));
             }; 
           }
           else{
@@ -41,15 +41,15 @@ function ShowSales() {
           }
         })
       }
-			fetchSales();
+			fetchServices();
 		},
   []);
 
   const [loading, setLoading] = useState(true);
 
 
-  function selectSale (id) {
-    setCurrentSale((sales.filter(item => item._id === id))[0]);
+  function selectService (id) {
+    setCurrentService((services.filter(item => item._id === id))[0]);
     setLoading(false);
 	}
    
@@ -71,7 +71,7 @@ function ShowSales() {
       ),
     );
   }
-  const result = sales.map(({_id,buyer_name,phone,payment_method,date,items}) => ({_id,buyer_name,phone,payment_method,date,items}));
+  const result = services.map(({_id,buyer_name,phone,payment_method,date,items}) => ({_id,buyer_name,phone,payment_method,date,items}));
   const columns = result[0] && Object.keys(result[0]);
 
   return (
@@ -83,7 +83,7 @@ function ShowSales() {
             {loading === true ?
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Sales Record</CardTitle>
+                <CardTitle tag="h4">Services Record</CardTitle>
                 <Input
                   placeholder="Search based on checked items"
                   type='text'
@@ -130,32 +130,33 @@ function ShowSales() {
                     </tr>
                   </thead>
                   <tbody>
-                    {search(result).map((saleItem,key) => 
-                        <tr key={key}>
-                          <td>
-                            Date: {parse(dateFormat(saleItem.date, " h:MM:ss TT, dddd, mmmm dS, yyyy").bold())}
-                            <br />
-                            <div>{saleItem.buyer_name ? "Buyer: " + saleItem.buyer_name: null }</div>
-                            {
-                            saleItem.items.map((item,key) => 
+                    {search(result).map((serviceItem,key) => 
+                      <tr key={key}>
+                        <td>
+                          Date: {parse(dateFormat(serviceItem.date, " h:MM:ss TT, dddd, mmmm dS, yyyy").bold())}
+                          <br />
+                          <div>{serviceItem.buyer_name ? "Buyer: " + serviceItem.buyer_name: null }</div>
+                          {
+                          serviceItem.items.map((item,key) => 
                             <div key={key}>
                               {item.product_name ? item.product_name : null }  {item.variation ? "-" + item.variation: null }
                             </div>
-                            )
-                            
-                            }
-                            Paid -  {(saleItem.payment_method)}
-                          </td>
-                          <td>
-                            {((saleItem.items).reduce((accumulator,current) => accumulator + current.price, 0)).toLocaleString()} 
-                          </td>
-                          <td>
-                            <Button onClick={()=> selectSale(saleItem._id)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">
-                              Show 
-                            </Button>
-                            
-                          </td>
-                        </tr>
+                          )
+                          
+                          }
+                          <br />
+                          Paid -  {(serviceItem.payment_method)}
+                        </td>
+                        <td>
+                          {((serviceItem.items).reduce((accumulator,current) => accumulator + current.price, 0)).toLocaleString()} 
+                        </td>
+                        <td>
+                          <Button onClick={()=> selectService(serviceItem._id)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">
+                            Show 
+                          </Button>
+                          
+                        </td>
+                      </tr>
                     )}
                   </tbody>
                 </Table>
@@ -163,7 +164,7 @@ function ShowSales() {
             </Card>
             :
             <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>setLoading(!loading)} className="btn-fill" color="primary">
-              <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Sales </font>
+              <FiArrowLeft size={20} /> <font style={{paddingLeft:"30px"}}>Back To Services </font>
             </Button>
           }
           </Col>
@@ -181,10 +182,10 @@ function ShowSales() {
                               <CardHeader>
                                 
                                 <div style={{textAlign:"center"}}>
-                                <CardTitle tag="h4">{currentSale.buyer_name ? "Buyer Name: "+currentSale.buyer_name:null }</CardTitle>                                  
-                                  <CardTitle tag="h4">{currentSale.phone ? "Phone: "+currentSale.phone:null }</CardTitle>
-                                  {currentSale.address ? "Address: "+currentSale.address:null } <br />
-                                  Date: {parse(dateFormat(currentSale.date, " h:MM:ss TT, dddd, mmmm dS, yyyy").bold())}
+                                  <CardTitle tag="h4">{currentService.buyer_name ? "Buyer Name: "+currentService.buyer_name:null }</CardTitle>                                  
+                                  <CardTitle tag="h4">{currentService.phone ? "Phone: "+currentService.phone:null }</CardTitle>
+                                  {currentService.address ? "Address: "+currentService.address:null } <br />
+                                  Date: {parse(dateFormat(currentService.date, " h:MM:ss TT, dddd, mmmm dS, yyyy").bold())}
                                 </div>
                               </CardHeader>
                                
@@ -200,15 +201,14 @@ function ShowSales() {
                             </tr>
                           </thead>
                           <tbody>
-                            {currentSale.items.map((item,key)=>(
+                            {currentService.items.map((item,key)=>(
                             <tr key={key}>
                               <td>
                               <Row>
                                   <Col className="pr-md-12" md="6">
-                                    {item.product_name} - {item.variation}
+                                    {item.product_name} {item.variation ? " - "+item.variation:null }
                                     <br />
                                   </Col>
-                                  
                                 </Row>
                               </td>
                               <td className="text-center">
@@ -220,8 +220,8 @@ function ShowSales() {
                           </tbody>
                         </Table>
                         <div style={{textAlign:"left:"}}>
-                              Payment Method: {currentSale.payment_method}<br />
-                              Total: {(currentSale.items).reduce((accumulator,current) => accumulator + current.price, 0)}
+                              Payment Method: {currentService.payment_method}<br />
+                              Total: {(currentService.items).reduce((accumulator,current) => accumulator + current.price, 0)}
                         </div>
                   
                       </div>
@@ -242,4 +242,4 @@ function ShowSales() {
   );
 }
 
-export default ShowSales;
+export default ShowServices;

@@ -16,7 +16,6 @@ const itemSchema = new Schema({
     },
 	variation:{
         type: String, 
-        required: true
     },
     price:{
         type: Number, 
@@ -29,16 +28,13 @@ const itemSchema = new Schema({
 const SaleSchema = new Schema(
 	{
 		buyer_name: {
-			type: String,
-			required: true
+			type: String
 		},
 		phone: {
-			type: String,
-			required: true
+			type: String
 		},
 		address: {
 			type: String,
-			required: true
 		},
         payment_method: {
 			type: String,
@@ -52,6 +48,10 @@ const SaleSchema = new Schema(
 		date:{
 			type: Date, 
 			default: Date.now
+		},
+		type: {
+			type: String, 
+			required:true
 		}
 	}
 );

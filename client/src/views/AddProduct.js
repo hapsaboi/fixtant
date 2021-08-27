@@ -19,7 +19,7 @@ import {
   Table
 } from "reactstrap";
 
-function UserProfile() {
+function AddProduct() {
   const [productName, setProductName] = useState('');
   const [brandName, setBrandName] = useState('');
   const [desc, setDesc] = useState('');
@@ -63,8 +63,9 @@ function UserProfile() {
           setNotificationDetails({msg:"Product Created Successfully", type:"success"});
         }
         else{
-          setNotificationDetails({msg:"Error Creating Product, make sure all fields are filled or try refresshing page.", type:"danger"});
+          setNotificationDetails({msg:"Error Creating Product, make sure all fields are filled or try refreshing page.", type:"danger"});
         }
+        setNotificationStatus(true);
       });
     }
 	}
@@ -245,4 +246,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default AddProduct;

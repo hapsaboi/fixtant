@@ -7,7 +7,7 @@ const Sales = require('../../models/Sale');
 const Products = require('../../models/Product');
 
 //@routes POST api/add_sale/
-//@desc create a sale 
+//@desc create a sale ---- used by product sale and service sale
 //@response - status: true or false
 // {
 //     "buyer_name":"Hanis Hapsa",
@@ -22,18 +22,22 @@ const Products = require('../../models/Product');
 router.post('/add_sale', auth, async(req,res)=>{
     const newSale = new Sales(req.body);
     newSale.store = req.user.id;
-    const items = req.body.items;
-    const ids = items.map(s=>s.product_id);
-    const products = await Products.find( { _id : { $in : ids } } );
 
     try{
-        const sale = await newSale.save();
-        for (var item of items) {
-            let temp = (products.filter(product => product._id == item.product_id))[0];
-            let tempItem = temp.variations.filter(x => x.variation == item.variation)[0];
-            tempItem.quantity = tempItem.quantity - item.quantity;
-            await Products.findByIdAndUpdate(temp._id,temp);
+        if(newSale.type==='sale'){
+            const items = req.body.items;
+            const ids = items.map(s=>s.product_id);
+            const products = await Products.find( { _id : { $in : ids } } ); 
+            for (var item of items) {
+                let temp = (products.filter(product => product._id == item.product_id))[0];
+                let tempItem = temp.variations.filter(x => x.variation == item.variation)[0];
+                tempItem.quantity = tempItem.quantity - item.quantity;
+                await Products.findByIdAndUpdate(temp._id,temp);
+            }
         };
+
+        const sale = await newSale.save();
+       
         if(sale){
             res.status(200).send({'status':true});
         }else{
@@ -50,6 +54,7 @@ router.post('/add_sale', auth, async(req,res)=>{
 //@response - status: true or false | data | error
 router.get('/show_sales', auth, async (req, res) => {
 	const store = req.user.id;
+    let type = req.query.type;
     let sale;
    
     let duration = req.query.duration;
@@ -80,7 +85,7 @@ router.get('/show_sales', auth, async (req, res) => {
             }).sort('date');
         }
     }else{
-        sale = await Sales.find({store}).sort({date:-1});
+        sale = await Sales.find({store,type}).sort({date:-1});
     };
 	try {
 		if (!sale){res.status(400).send({status:false, error:'Problem with the query'})};
