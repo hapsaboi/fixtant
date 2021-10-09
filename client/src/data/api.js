@@ -1,4 +1,4 @@
-const BackEnd = process.env.REACT_APP_BackEndHostLocal;
+const BackEnd = process.env.REACT_APP_BackEndHost;
 
 export const product = {
 	//takes in a body with data
