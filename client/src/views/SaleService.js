@@ -4,6 +4,7 @@ import axios from 'axios';
 import Notifications from "components/Notification/Notification";
 import 'boxicons';
 import { FiArrowLeft } from "react-icons/fi";
+import LoadingOverlay from 'react-loading-overlay';
 
 // reactstrap components
 import {
@@ -25,13 +26,14 @@ function SaleService() {
     const [currentService, setCurrentService] = useState({});
     const [price, setPrice] = useState(0);
     const [sellDetailsMode, setSellDetailsMode] = useState(false);
-    const [buyerDetail, setBuyerDetail] = useState({buyer_name:"",phone:"",payment_method:"",address:""});
+    const [buyerDetail, setBuyerDetail] = useState({buyer_name:"",phone:"",payment_method:"Cash",address:""});
     
     const [cart, setCart] = useState([]);
     const [notificationStatus, setNotificationStatus] = useState(false)
     const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
     
     const [loading, setLoading] = useState(true);
+    const [requestLoading, setRequestLoading] = useState(false);
 
     useEffect(
       () => {
@@ -97,9 +99,10 @@ function SaleService() {
     };
 
 
-    async function addSale (details) {
+    async function addSale ({details}) {
+      setRequestLoading(true);
       if(cart.length>0){
-        if((buyerDetail.buyer_name==="" || buyerDetail.phone==="" || buyerDetail.buyer_address==="" || buyerDetail.payment_method==="")  && details.details===true){
+        if((buyerDetail.buyer_name==="" || buyerDetail.phone==="" || buyerDetail.buyer_address==="" || buyerDetail.payment_method==="")  && details===true){
           setNotificationDetails({msg:"Some Buyer Fields are Empty", type:"danger"});
           setNotificationStatus(true);
         }else{
@@ -113,6 +116,11 @@ function SaleService() {
               setNotificationDetails({msg:"Sale Unsuccessful, Please Refresh and Try Again!", type:"Danger"});
             }
             setNotificationStatus(true);
+          }).catch(function (error) {
+            if (error.response) {
+              // Request made and server responded
+              setNotificationDetails({msg:error.response.data.message, type:"danger"});
+            }
           });
         }
       }
@@ -120,6 +128,7 @@ function SaleService() {
         setNotificationDetails({msg:"Sale Unsuccessful, Cart is Empty!", type:"danger"});
         setNotificationStatus(true);
       }
+    setRequestLoading(false);
   }
 
     
@@ -150,6 +159,7 @@ function SaleService() {
         <Row>
           {loading === true ?
           <Col md="8">
+            <LoadingOverlay active={requestLoading} spinner text='Loading your request...'>
             {!sellDetailsMode ? 
             <Card>
               <CardHeader>
@@ -292,6 +302,7 @@ function SaleService() {
               </CardBody>
             </Card>
             }
+            </LoadingOverlay>
           </Col>
           :
           <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>{setLoading(!loading); setSellDetailsMode(false)}} className="btn-fill" color="primary">

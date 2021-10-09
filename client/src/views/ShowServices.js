@@ -29,7 +29,7 @@ function ShowServices() {
   useEffect(
 		() => {
 			async function fetchServices() {
-				await axios.get(sale.showSales, {params:{type:'service'}}).then((response)=>{
+				await axios.get(sale.showSales,{params:{type:'service'}}).then((response)=>{
 		      if(response.data.status===true){
             if(response.data.data.length>0){
                 setServices((response.data.data));
@@ -64,7 +64,7 @@ function ShowServices() {
     return rows.filter((row) =>
       searchColumns.some(
         (column) =>
-          row[column]
+        (" " + row[column])
             .toString()
             .toLowerCase()
             .indexOf(q.toLowerCase()) > -1,

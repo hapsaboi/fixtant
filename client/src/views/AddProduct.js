@@ -3,6 +3,7 @@ import Axios from "axios";
 import Notifications from "components/Notification/Notification";
 import { product } from '../data/api';
 import { FaTrashAlt } from 'react-icons/fa';
+import LoadingOverlay from 'react-loading-overlay';
 
 // reactstrap components
 import {
@@ -32,6 +33,8 @@ function AddProduct() {
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
 
   const [variationList, setVariationList] = useState([]);
+  const [requestLoading, setRequestLoading] = useState(false);
+  
 
   async function addVariation(e) {
 		e.preventDefault();
@@ -47,6 +50,7 @@ function AddProduct() {
     }
 	}
   async function addProduct () {
+    setRequestLoading(true);
     if(productName==='' || desc==='' || brandName===''){
       setNotificationDetails({msg:"Some Product Fields are Empty", type:"danger"});
       setNotificationStatus(true);
@@ -68,6 +72,7 @@ function AddProduct() {
         setNotificationStatus(true);
       });
     }
+    setRequestLoading(false);
 	}
 
   const handleRemoveItem = (e) => {
@@ -186,59 +191,61 @@ function AddProduct() {
             </Card>
           </Col>
           <Col md="4">
-            <Card className="card-user">
-              <CardBody>
-                <CardText />
-                <div className="author">
-                  <div className="block block-one" />
-                  <div className="block block-two" />
-                  <div className="block block-three" />
-                  <div className="block block-four" />
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar"
-                      src={require("assets/img/product.png").default}
-                    />
-                    <h5 className="title">Product Name: {productName} </h5>
-                    <h5 className="title">Brand Name: {brandName} </h5>
-                  </a>
-                </div>
-                <div className="card-description">
-                  Description: {desc}
+            <LoadingOverlay active={requestLoading} spinner text='Loading your request...'>
+              <Card className="card-user">
+                <CardBody>
+                  <CardText />
+                  <div className="author">
+                    <div className="block block-one" />
+                    <div className="block block-two" />
+                    <div className="block block-three" />
+                    <div className="block block-four" />
+                    <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                      <img
+                        alt="..."
+                        className="avatar"
+                        src={require("assets/img/product.png").default}
+                      />
+                      <h5 className="title">Product Name: {productName} </h5>
+                      <h5 className="title">Brand Name: {brandName} </h5>
+                    </a>
+                  </div>
+                  <div className="card-description">
+                    Description: {desc}
 
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>Variation</th>
-                        <th className="text-center">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {variationList.map((variationItem,key)=>(
-                      <tr key={key}>
-                        <td>
-                          <p>Variation: {variationItem.variation}</p>
-                          <p>Model: {variationItem.model}</p>
-                          <p>Buying Price: {variationItem.buying_price}</p>
-                          <p>Selling Price: {variationItem.selling_price}</p>
-                        </td>
-                        <td style={{cursor:"pointer"}} className="text-center">
-                          <FaTrashAlt onClick={()=>handleRemoveItem(variationItem.variation)}  color='red' />
-                        </td>
-                      </tr>
-                      ))}
-                    
-                    </tbody>
-                  </Table>
-            
-                </div>
-                <Button onClick={()=> addProduct()} className="btn-fill" color="primary" type="submit">
-                  Add Product
-                </Button>
+                    <Table className="tablesorter" responsive>
+                      <thead className="text-primary">
+                        <tr>
+                          <th>Variation</th>
+                          <th className="text-center">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {variationList.map((variationItem,key)=>(
+                        <tr key={key}>
+                          <td>
+                            <p>Variation: {variationItem.variation}</p>
+                            <p>Model: {variationItem.model}</p>
+                            <p>Buying Price: {variationItem.buying_price}</p>
+                            <p>Selling Price: {variationItem.selling_price}</p>
+                          </td>
+                          <td style={{cursor:"pointer"}} className="text-center">
+                            <FaTrashAlt onClick={()=>handleRemoveItem(variationItem.variation)}  color='red' />
+                          </td>
+                        </tr>
+                        ))}
+                      
+                      </tbody>
+                    </Table>
+              
+                  </div>
+                  <Button onClick={()=> addProduct()} className="btn-fill" color="primary" type="submit">
+                    Add Product
+                  </Button>
 
-              </CardBody>
-            </Card>
+                </CardBody>
+              </Card>
+            </LoadingOverlay>
           </Col>
         </Row>
       </div>

@@ -2,6 +2,7 @@ import React,{useState} from "react";
 import Axios from "axios";
 import Notifications from "components/Notification/Notification";
 import { service } from '../data/api';
+import LoadingOverlay from 'react-loading-overlay';
 
 // reactstrap components
 import {
@@ -24,9 +25,12 @@ function AddService() {
 
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
+  
+  const [requestLoading, setRequestLoading] = useState(false);
 
 
   async function addService () {
+    setRequestLoading(true);
     if(serviceName==='' || desc==='' || price===''){
       setNotificationDetails({msg:"Some Service Fields are Empty", type:"danger"});
       setNotificationStatus(true);
@@ -47,6 +51,7 @@ function AddService() {
         setNotificationStatus(true);
       });
     }
+    setRequestLoading(true);
 	}
 
   return (
@@ -106,33 +111,35 @@ function AddService() {
             </Card>
           </Col>
           <Col md="4">
-            <Card className="card-user">
-              <CardBody>
-                <CardText />
-                <div className="author">
-                  <div className="block block-one" />
-                  <div className="block block-two" />
-                  <div className="block block-three" />
-                  <div className="block block-four" />
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar"
-                      src={require("assets/img/product.png").default}
-                    />
-                    <h5 className="title">Service Name: {serviceName} </h5>
-                    <h5 className="title">Price: {price} </h5>
-                  </a>
-                </div>
-                <div className="card-description">
-                  Description: {desc}
-                </div>
-                <Button onClick={()=> addService()} className="btn-fill" color="primary" type="submit">
-                  Add Service
-                </Button>
+            <LoadingOverlay active={requestLoading} spinner text='Loading your request...'>
+              <Card className="card-user">
+                <CardBody>
+                  <CardText />
+                  <div className="author">
+                    <div className="block block-one" />
+                    <div className="block block-two" />
+                    <div className="block block-three" />
+                    <div className="block block-four" />
+                    <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                      <img
+                        alt="..."
+                        className="avatar"
+                        src={require("assets/img/product.png").default}
+                      />
+                      <h5 className="title">Service Name: {serviceName} </h5>
+                      <h5 className="title">Price: {price} </h5>
+                    </a>
+                  </div>
+                  <div className="card-description">
+                    Description: {desc}
+                  </div>
+                  <Button onClick={()=> addService()} className="btn-fill" color="primary" type="submit">
+                    Add Service
+                  </Button>
 
-              </CardBody>
-            </Card>
+                </CardBody>
+              </Card>
+            </LoadingOverlay>
           </Col>
         </Row>
       </div>

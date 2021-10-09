@@ -126,7 +126,7 @@ function Products() {
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Products</CardTitle> 
                 <div className="pull-right" style={{marginBottom:'20px'}}> 
-                    <Link to="/admin/addservice">
+                    <Link to="/admin/addproduct">
                         <Button  className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
                             Add Product
                         </Button>
