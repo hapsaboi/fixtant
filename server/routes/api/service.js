@@ -35,7 +35,7 @@ router.post('/add_service', auth, async(req,res)=>{
 
 
 //@routes GET api/show_store_services/
-//@desc Get all 
+//@desc Get all list of services provided by store
 //@response - status: true or false | data | error
 router.get('/show_store_services', auth, async (req, res) => {
 	const store = req.user.id;
@@ -43,6 +43,7 @@ router.get('/show_store_services', auth, async (req, res) => {
 	try {
 		if (!services){res.status(400).send({status:false, error:'Problem with the query'})};
 		res.status(200).send({status:true,data:services});
+		console.log(services)
         
 	} catch (err) {
 		res.status(400).json({ msg: err });

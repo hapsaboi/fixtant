@@ -25,9 +25,13 @@ function AuthContextProvider(props) {
 		if (loggedInRes.data.status===false) {
 			window.localStorage.removeItem("token");
 			setLoggedIn(false);
+			setUserDetail({});
 			<Redirect to="/" />;
 		}else{
-			setLoggedIn(loggedInRes.data);
+			Axios.get(authenticate.getUserData).then(async (user) => {
+				setUserDetail(user.data);
+				setLoggedIn(true);
+			});
 		}
 	}
 	useEffect(

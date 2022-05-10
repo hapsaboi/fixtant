@@ -22,8 +22,11 @@ const Products = require('../../models/Product');
 router.post('/add_sale', auth, async(req,res)=>{
     const newSale = new Sales(req.body);
     newSale.store = req.user.id;
-
+    console.log(req.body);
     try{
+        
+        const sale = await newSale.save();
+
         if(newSale.type==='sale'){
             const items = req.body.items;
             const ids = items.map(s=>s.product_id);
@@ -35,8 +38,6 @@ router.post('/add_sale', auth, async(req,res)=>{
                 await Products.findByIdAndUpdate(temp._id,temp);
             }
         };
-
-        const sale = await newSale.save();
        
         if(sale){
             res.status(200).send({'status':true});
@@ -44,7 +45,7 @@ router.post('/add_sale', auth, async(req,res)=>{
             res.status(400).send({'status':false});
         }
     }catch(err){
-        res.status(400).json({ msg: err });
+        res.status(400).json(err);
     }
 
 });
@@ -56,6 +57,7 @@ router.get('/show_sales', auth, async (req, res) => {
 	const store = req.user.id;
     let type = req.query.type;
     let sale;
+
    
     let duration = req.query.duration;
     if(duration){ 
@@ -86,6 +88,7 @@ router.get('/show_sales', auth, async (req, res) => {
         }
     }else{
         sale = await Sales.find({store,type}).sort({date:-1});
+        console.log(sale);
     };
 	try {
 		if (!sale){res.status(400).send({status:false, error:'Problem with the query'})};

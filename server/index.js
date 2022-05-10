@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: ["http://localhost:3000","https://fixtant.netlify.app"],
+		origin: ["http://localhost:3000","https://fixtant.netlify.app","http://172.20.10.3:3000"],
 		credentials: true
 	})
 );
@@ -28,6 +28,7 @@ app.use('/api/change', require('./routes/api/change'));
 app.use('/api/sale', require('./routes/api/sale'));
 app.use('/api/user', require('./routes/api/user'));
 app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/staff', require('./routes/api/staff'));
 
 // serve static assets if production
 // if(process.env.NODE_ENV === 'production'){

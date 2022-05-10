@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
+const StaffSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -19,29 +19,19 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    address: {type: String},
-    city: {type: String},
-    state: {type: String},
-    about: {type: String},
-    register_date: {
-        type: Date,
-        default: Date.now,
-    },
     password: {
         type: String,
         required: true,
     },
-    status: {
-        type: String,
-        default: 'not verified',
-    },
     type: {
         type: String,
-        default: 'admin',
+        default:'staff'
     },
-    tempToken: String,
-    tempTokenExpire: Date,
+    status: {
+        type: String,
+        default: 'active',
+    }
 });
 
 
-module.exports = mongoose.model('Users', UserSchema);
+module.exports = mongoose.model('Staff', StaffSchema);

@@ -28,7 +28,7 @@ function Notifications({details}) {
   
   return (
     <>
-        <NotificationAlert ref={notificationAlertRef} />
+      <NotificationAlert ref={notificationAlertRef} />
     </>
   );
 }

@@ -39,8 +39,8 @@ router.post('/add_product', auth, async(req,res)=>{
 //@routes GET api/show_store_products/
 //@desc Get all 
 //@response - status: true or false | data | error
-router.get('/show_store_products', auth, async (req, res) => {
-	const store = req.user.id;
+router.get('/show_store_products/:id', auth, async (req, res) => {
+	const store = req.params.id;
 	const products = await Products.find({store});
 	try {
 		if (!products){res.status(400).send({status:false, error:'Problem with the query'})};

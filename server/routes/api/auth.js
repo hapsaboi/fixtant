@@ -7,6 +7,7 @@ dotenv.config();
 const crypto = require('crypto');
 // Users Model
 const User = require('../../models/User');
+const Staff = require('../../models/Staff');
 // getting the auth middleware
 const {auth} = require('../../middleware/auth');
 const sendEmail = require('../../utils/sendEmail');
@@ -28,9 +29,17 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const user = await User.findOne({ email });
-        if (!user) return res.status(401).send({ msg: 'User Does Not Exist', auth: false });
+        let user = await User.findOne({ email });
+        
+        if (!user){
+            user = await Staff.findOne({ email });
+        }
 
+        if (!user){
+            return res.status(401).send({ msg: 'User Does Not Exist', auth: false });
+        }
+
+        
         if (user.status === 'not verified') {
 
             const verifyToken = crypto.randomBytes(20).toString("hex");
@@ -66,6 +75,8 @@ router.post('/', async (req, res) => {
                 return res.status(500).send({ msg: 'Account not verified, a new verification email sent, email could not be sent. Please contact admin!' });
             }
 
+        }else if(user.status === 'suspended'){
+            return res.status(401).send({ msg: 'User account suspended', auth: false });
         }
 
         //Validating Password
@@ -105,10 +116,14 @@ router.post('/', async (req, res) => {
 //@routes GET api/auth/user
 //@desc Get user data
 //@access Private
-router.get('/user', auth, (req, res) => {
-    User.findById(req.user.id)
-        .select('name store email')
-        .then(user => res.json(user))
+router.get('/user', auth, async(req, res) => {
+    let user = await User.findById(req.user.id).select('name store email type');
+    
+    if(!user){
+        user = await Staff.findById(req.user.id);
+    }
+    
+    res.json(user);
 });
 
 

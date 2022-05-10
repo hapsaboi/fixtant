@@ -4,191 +4,221 @@ const Changes = require('../models/Changes');
 async function addProduct(product) {
     let store = product.store;
     var productChange = {
-        data:{
+        data: {
             "type": "Add",
-            "message" : "A product with name: <b>"+product.product_name+"</b> was added",
-            "item_id": product._id, 
+            "message": "A product with name: <b>" + product.product_name + "</b> was added",
+            "item_id": product._id,
         },
-        store  
+        store
     }
-    
-    const change = await Changes.find({store});
-    if(change.length>0){
+
+    const change = await Changes.find({ store });
+    if (change.length > 0) {
         change[0].data.push(productChange.data);
-        await Changes.findOneAndUpdate({store},change[0]);
-    }else{    
+        await Changes.findOneAndUpdate({ store }, change[0]);
+    } else {
         const newChange = new Changes(productChange);
-        await newChange.save(); 
+        await newChange.save();
     }
 
 }
-function variationDiff(a,b) {
+
+async function addStaff(product) {
+    let store = product.store;
+    var productChange = {
+        data: {
+            "type": "Add",
+            "message": "A staff with name: <b>" + product.name + "</b> was added",
+            "item_id": product.email,
+        },
+        store
+    }
+
+    const change = await Changes.find({ store });
+    if (change.length > 0) {
+        change[0].data.push(productChange.data);
+        await Changes.findOneAndUpdate({ store }, change[0]);
+    } else {
+        const newChange = new Changes(productChange);
+        await newChange.save();
+    }
+
+}
+function variationDiff(a, b) {
     var messages = [];
     var type = "";
 
     //deleted variations
     let res = a.filter(el => {
         return !b.find(element => {
-           return element._id == el._id;
+            return element._id == el._id;
         });
     });
 
-    
-    res.forEach(function (one,index) {
+
+    res.forEach(function (one, index) {
         var temp2 = true;
-        for(var element in one) {
-            if(temp2 == true){
-                var message = "variation : <b>" +one.variation+"</b> has been removed <br />";
-                messages.push(message); 
-                type+="variaiton,";
+        for (var element in one) {
+            if (temp2 == true) {
+                var message = "variation : <b>" + one.variation + "</b> has been removed <br />";
+                messages.push(message);
+                type += "variaiton,";
                 temp2 = false;
             }
         }
     });
 
-    b.forEach(function (oneB,index) {
+    b.forEach(function (oneB, index) {
         //if item already exist
-        if(oneB._id){
-            for(var element in oneB) {
-                if(a[index] && b[index]){
-                    if(a[index][element]!=b[index][element]){
-                        var message = element + " of variation <b>" +a[index].variation+"</b> has been changed from <b>" + a[index][element] + "</b> to <b>" + b[index][element]+"</b><br />";
-                        messages.push(message); 
-                        type+=element+",";
-                    
-                    } 
+        if (oneB._id) {
+            for (var element in oneB) {
+                if (a[index] && b[index]) {
+                    if (a[index][element] != b[index][element]) {
+                        var message = element + " of variation <b>" + a[index].variation + "</b> has been changed from <b>" + a[index][element] + "</b> to <b>" + b[index][element] + "</b><br />";
+                        messages.push(message);
+                        type += element + ",";
+
+                    }
                 }
             }
-        }else{
-            if(b[index]){
-                var message = "A new variation : <b>" +b[index].variation+"</b> has been added <br />";
-                messages.push(message); 
-                type+="variation,";
+        } else {
+            if (b[index]) {
+                var message = "A new variation : <b>" + b[index].variation + "</b> has been added <br />";
+                messages.push(message);
+                type += "variation,";
             }
         }
     });
 
-    return ({messages,type});
+    return ({ messages, type });
 }
 
-function diff(a,b) {
+function diff(a, b) {
     var messages = [];
     var varmesseage = [];
     var type = "Update - ";
-    for(var element in b) {
-        if(element=="variations"){
-            varmesseage = variationDiff(a[element],b[element]);
+    for (var element in b) {
+        if (element == "variations") {
+            varmesseage = variationDiff(a[element], b[element]);
         }
 
-       if(typeof(a[element])=="string"){
-           if(a[element]!==b[element]){
-               var message = element +" has been changed from <b>" + a[element] + "</b> to <b>" + b[element]+"</b><br />";
-               messages.push(message); 
-               type+=element+",";
-           }
-       }
-   };
-   
-   messages = messages.concat(varmesseage.messages);
-   if(messages!=""){
-        if(a.product_name){
-           messages = "<b>"+a.product_name + "</b>: <br />"+messages
-        } else{
-            messages = "<b>"+a.store + "</b>: <br />"+messages
+        if (typeof (a[element]) == "string") {
+            if (a[element] !== b[element]) {
+                var message = '';
+                if (element === 'password') {
+                    message = element + " has been changed";
+                } else {
+                    message = element + " has been changed from <b>" + a[element] + "</b> to <b>" + b[element] + "</b><br />";
+                }
+                messages.push(message);
+                type += element + ",";
+            }
         }
-       
+    };
+
+    messages = messages.concat(varmesseage.messages);
+    if (messages != "") {
+        if (a.product_name) {
+            messages = "<b>" + a.product_name + "</b>: <br />" + messages
+        } else if (a.name) {
+            messages = "<b>" + a.name + "</b>: <br />" + messages
+        }
+        else {
+            messages = "<b>" + a.store + "</b>: <br />" + messages
+        }
+
     }
-    if(varmesseage.type){
-        type=type+varmesseage.type; 
+    if (varmesseage.type) {
+        type = type + varmesseage.type;
     }
 
-   type=type.slice(0,-1);
-   return({messages,type}); 
+    type = type.slice(0, -1);
+    return ({ messages, type });
 }
 
-async function updateProductChange(product,updatedProduct) {
-    let difference  = diff(product,updatedProduct);
+async function updateProductChange(product, updatedProduct) {
+    let difference = diff(product, updatedProduct);
 
     let store = updatedProduct.store;
-    if(difference.messages!=""){
+    if (difference.messages != "") {
         var productChange = {
-            data:{
+            data: {
                 "type": difference.type,
-                "message" : difference.messages.toString().replace(/,/g, ""),
-                "item_id": updatedProduct._id   
+                "message": difference.messages.toString().replace(/,/g, ""),
+                "item_id": updatedProduct._id
             },
-            store  
+            store
         }
 
-        const change = await Changes.find({store});
-        if(change.length>0){
+        const change = await Changes.find({ store });
+        if (change.length > 0) {
             change[0].data.push(productChange.data);
-            await Changes.findOneAndUpdate({store},change[0]);
-        }else{    
+            await Changes.findOneAndUpdate({ store }, change[0]);
+        } else {
             const newChange = new Changes(productChange);
-            await newChange.save(); 
+            await newChange.save();
         }
         //Changes Made Successfully
-        return("CMS");
-    }else{
-         //No Changes Made
-        return("NCM");
+        return ("CMS");
+    } else {
+        //No Changes Made
+        return ("NCM");
     }
-   
+
 }
 
 // for users
 async function addUser(user) {
     let store = user.store;
     var userChange = {
-        data:{
+        data: {
             "type": "Add",
-            "message" : "Store with name Owner: <b>"+user.name+"</b> was added",
-            "item_id": user._id, 
+            "message": "Store with name Owner: <b>" + user.name + "</b> was added",
+            "item_id": user._id,
         },
-        store  
+        store
     }
-    
-    const change = await Changes.find({store});
-    if(change.length>0){
+
+    const change = await Changes.find({ store });
+    if (change.length > 0) {
         change[0].data.push(userChange.data);
-        await Changes.findOneAndUpdate({store},change[0]);
-    }else{    
+        await Changes.findOneAndUpdate({ store }, change[0]);
+    } else {
         const newChange = new Changes(userChange);
-        await newChange.save(); 
+        await newChange.save();
     }
 
     return userChange;
 
 }
 
-async function editProfileChange(userData,updatedData){
-    let difference = diff(userData,updatedData);
-    
+async function editProfileChange(userData, updatedData) {
+    let difference = diff(userData, updatedData);
+
     let store = updatedData._id;
-    if(difference.messages!=""){
+    if (difference.messages != "") {
         var userChange = {
-            data:{
+            data: {
                 "type": difference.type,
-                "message" : difference.messages.toString().replace(/,/g, ""),
-                "item_id": updatedData._id   
+                "message": difference.messages.toString().replace(/,/g, ""),
+                "item_id": updatedData._id
             },
-            store  
+            store
         }
 
-        const change = await Changes.find({store});
-        if(change.length>0){
+        const change = await Changes.find({ store });
+        if (change.length > 0) {
             change[0].data.push(userChange.data);
-            await Changes.findOneAndUpdate({store},change[0]);
-        }else{    
+            await Changes.findOneAndUpdate({ store }, change[0]);
+        } else {
             const newChange = new Changes(userChange);
-            await newChange.save(); 
+            await newChange.save();
         }
         //Changes Made Successfully
-        return("CMS");
-    }else{
-         //No Changes Made
-        return("NCM");
+        return ("CMS");
+    } else {
+        //No Changes Made
+        return ("NCM");
     }
 }
 
@@ -197,56 +227,87 @@ async function editProfileChange(userData,updatedData){
 async function addService(service) {
     let store = service.store;
     var serviceChange = {
-        data:{
+        data: {
             "type": "Add",
-            "message" : "Service with name: <b>"+service.service_name+"</b> was added",
-            "item_id": service._id, 
+            "message": "Service with name: <b>" + service.service_name + "</b> was added",
+            "item_id": service._id,
         },
-        store  
+        store
     }
-    
-    const change = await Changes.find({store});
-    if(change.length>0){
+
+    const change = await Changes.find({ store });
+    if (change.length > 0) {
         change[0].data.push(serviceChange.data);
-        await Changes.findOneAndUpdate({store},change[0]);
-    }else{    
+        await Changes.findOneAndUpdate({ store }, change[0]);
+    } else {
         const newChange = new Changes(serviceChange);
-        await newChange.save(); 
+        await newChange.save();
     }
 
     return serviceChange;
 
 }
 
-async function editServiceChange(serviceData,updatedServiceData){
-    let difference = diff(serviceData,updatedServiceData);
+async function editServiceChange(serviceData, updatedServiceData) {
+    let difference = diff(serviceData, updatedServiceData);
     let store = updatedServiceData.store;
 
-    if(difference.messages!=""){
+    if (difference.messages != "") {
         var serviceChange = {
-            data:{
+            data: {
                 "type": difference.type,
-                "message" : difference.messages.toString().replace(/,/g, ""),
-                "item_id": updatedServiceData._id   
+                "message": difference.messages.toString().replace(/,/g, ""),
+                "item_id": updatedServiceData._id
             },
-            store  
+            store
         }
 
-        const change = await Changes.find({store});
-        if(change.length>0){
+        const change = await Changes.find({ store });
+        if (change.length > 0) {
             change[0].data.push(serviceChange.data);
-            await Changes.findOneAndUpdate({store},change[0]);
-        }else{    
+            await Changes.findOneAndUpdate({ store }, change[0]);
+        } else {
             const newChange = new Changes(serviceChange);
-            await newChange.save(); 
+            await newChange.save();
         }
         //Changes Made Successfully
-        return("CMS");
-    }else{
-         //No Changes Made
-        return("NCM");
+        return ("CMS");
+    } else {
+        //No Changes Made
+        return ("NCM");
+    }
+}
+
+
+async function updateStaffChange(serviceData, updatedServiceData) {
+    let difference = diff(serviceData, updatedServiceData);
+    let store = updatedServiceData.store;
+
+    if (difference.messages != "") {
+        var serviceChange = {
+            data: {
+                "type": difference.type,
+                "message": difference.messages.toString().replace(/,/g, ""),
+                "item_id": updatedServiceData.email
+            },
+            store
+        }
+
+        const change = await Changes.find({ store });
+        if (change.length > 0) {
+            change[0].data.push(serviceChange.data);
+            await Changes.findOneAndUpdate({ store }, change[0]);
+        } else {
+            const newChange = new Changes(serviceChange);
+            await newChange.save();
+        }
+        //Changes Made Successfully
+        return ("CMS");
+    } else {
+        //No Changes Made
+        return ("NCM");
     }
 }
 
 // To export above functions:
-module.exports = {addProduct,updateProductChange,addUser,editProfileChange, addService, editServiceChange};
+module.exports = { addProduct, updateProductChange, addUser, editProfileChange, addService, editServiceChange, updateStaffChange, addStaff };

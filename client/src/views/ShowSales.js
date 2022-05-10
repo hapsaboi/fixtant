@@ -64,7 +64,7 @@ function ShowSales() {
     return rows.filter((row) =>
       searchColumns.some(
         (column) =>
-          row[column]
+        (" " + row[column])
             .toString()
             .toLowerCase()
             .indexOf(q.toLowerCase()) > -1,
@@ -104,6 +104,7 @@ function ShowSales() {
                         className="btn-simple"
                         color="info"
                         id={key}
+                        key={key}
                         size="sm"
                         onClick={() => {
                           const checked = searchColumns.includes(column);

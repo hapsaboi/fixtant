@@ -87,12 +87,12 @@ function Dashboard() {
                   <Table>
                     <tbody>
                       {today.map((saleItem,key) => 
-                      <>
+                  
                         <tr key={key}>
                           <td>
                             <p className="title">
                               {saleItem.items.map((item,key) => 
-                                <><span key={key}>{item.product_name} - {item.variation}</span><br /></>
+                                <span key={key}>{item.product_name} - {item.variation}<br /></span>
                               )}
                             </p>
                             <p className="text-muted">
@@ -103,7 +103,6 @@ function Dashboard() {
                             <span style={{color:"#32CD32"}}>{((saleItem.items).reduce((accumulator,current) => accumulator + current.price, 0)).toLocaleString()} </span>
                           </td>
                         </tr>
-                        </>
                     )}
                     </tbody>
                   </Table>

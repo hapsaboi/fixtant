@@ -221,7 +221,7 @@ function Inventory() {
                 :
                 <div style={{textAlign: "center",padding:"20px"}}> 
                   <img src={empty} style={{marginBottom:"30px"}} height="250px"  alt="Nothing to show yet"/><br />
-                  <CardTitle tag="h4"> Nothing To Show Yet... Add some products to the system in order to manage invenotry</CardTitle>
+                  <CardTitle tag="h4"> Nothing To Show Yet... Add some products to the system in order to manage inventory</CardTitle>
                 </div>  
                 }
                 </>

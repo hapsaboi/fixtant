@@ -1,7 +1,7 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import Axios from "axios";
 import Notifications from "components/Notification/Notification";
-import { service } from '../data/api';
+import { staff } from '../data/api';
 import LoadingOverlay from 'react-loading-overlay';
 
 // reactstrap components
@@ -18,72 +18,65 @@ import {
   Col,
 } from "reactstrap";
 
-function AddService() {
-  const [serviceName, setServiceName] = useState('');
-  const [desc, setDesc] = useState('');
-  const [price, setPrice] = useState('');
+function AddStaff() {
+  const [staffData, setStaffData] = useState('');
 
   const [notificationStatus, setNotificationStatus] = useState(false)
-  const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
-  
+  const [notificationDetails, setNotificationDetails] = useState({ msg: "", type: "" });
+
   const [requestLoading, setRequestLoading] = useState(false);
 
 
-  async function addService () {
+  async function addStaff(e) {
+    e.preventDefault();
     setRequestLoading(true);
-    if(serviceName==='' || desc==='' || price===''){
-      setNotificationDetails({msg:"Some Service Fields are Empty", type:"danger"});
+    if (staffData.name === '' || staffData.email === '' || staffData.phone === '' || staffData.password === '') {
+      setNotificationDetails({ msg: "Some Staff Fields are Empty", type: "danger" });
       setNotificationStatus(true);
-    }else{
-      const serviceData = { 
-        "service_name":serviceName, 
-        "service_desc":desc,
-        "price":price,
-      };
-      await Axios.post(service.addService, serviceData).then((res)=>{
-        console.log(res)
-        if(res.data.status){
-          setNotificationDetails({msg:"Service Created Successfully", type:"success"});
+    } else {
+      await Axios.post(staff.addStaff, staffData).then((res) => {
+        if (res.data.status) {
+          setNotificationDetails({ msg: "Staff Created Successfully", type: "success" });
         }
-        else{
-          setNotificationDetails({msg:"Error Creating Service, make sure all fields are filled or try refreshing page.", type:"danger"});
+        else {
+          setNotificationDetails({ msg: "Error Creating Staff, make sure all fields are filled or try refreshing page.", type: "danger" });
         }
         setNotificationStatus(true);
       });
     }
-    setRequestLoading(true);
-	}
+    setRequestLoading(false);
+  }
 
   return (
     <>
-      {notificationStatus?<Notifications details={notificationDetails} />:null}
+      {notificationStatus ? <Notifications details={notificationDetails} /> : null}
       <div className="content">
         <Row>
           <Col md="8">
             <Card>
               <CardHeader>
-                <h5 className="title">Add Service </h5>
+                <h5 className="title">Add Staff </h5>
               </CardHeader>
               <CardBody>
-                <Form>
+                <Form onSubmit={addStaff}>
                   <Row>
                     <Col className="pr-md-1" md="6">
                       <FormGroup>
-                        <label>Service Name</label>
+                        <label>Staff Name</label>
                         <Input
-                          placeholder="Screen Repairs"
+                          placeholder="Tecno Camon CX"
                           type="text"
-                          onChange={(e) => setServiceName(e.target.value)}
+                          onChange={(e) => setStaffData({ ...staffData, name: e.target.value })}
                         />
                       </FormGroup>
                     </Col>
                     <Col className="pl-md-1" md="6">
                       <FormGroup>
-                        <label>Price</label>
+                        <label>Email</label>
                         <Input
-                          placeholder="10,000"
-                          type="number"
-                          onChange={(e) => setPrice(e.target.value)}
+                          placeholder="e.g bounce@gmail.com"
+                          type="text"
+                          onChange={(e) => setStaffData({ ...staffData, email: e.target.value })}
                         />
                       </FormGroup>
                     </Col>
@@ -91,21 +84,33 @@ function AddService() {
                   </Row>
 
                   <Row>
-                    <Col md="12">
+                    <Col className="pr-md-1" md="6">
                       <FormGroup>
-                        <label>Description</label>
+                        <label>Phone Number</label>
                         <Input
-                          cols="80"
-                          placeholder="This service is a ..."
-                          rows="4"
-                          type="textarea"
-                          onChange={(e) => setDesc(e.target.value)}
+                          placeholder="09012345678"
+                          type="text"
+                          onChange={(e) => setStaffData({ ...staffData, phone: e.target.value })}
                         />
                       </FormGroup>
                     </Col>
-                    
+                    <Col className="pl-md-1" md="6">
+                      <FormGroup>
+                        <label>Password</label>
+                        <Input
+                          placeholder=""
+                          type="password"
+                          onChange={(e) => setStaffData({ ...staffData, password: e.target.value })}
+                        />
+                      </FormGroup>
+                    </Col>
+
                   </Row>
 
+
+                  <Button className="btn-fill" color="primary" type="submit">
+                    Add Staff
+                  </Button>
                 </Form>
               </CardBody>
             </Card>
@@ -126,16 +131,13 @@ function AddService() {
                         className="avatar"
                         src={require("assets/img/product.png").default}
                       />
-                      <h5 className="title">Service Name: {serviceName} </h5>
-                      <h5 className="title">Price: {price} </h5>
+                      <h5 className="title">Staff Name: {staffData.name} </h5>
+                      <h5 className="title">Email: {staffData.email} </h5>
                     </a>
                   </div>
                   <div className="card-description">
-                    Description: {desc}
+                   
                   </div>
-                  <Button onClick={()=> addService()} className="btn-fill" color="primary" type="submit">
-                    Add Service
-                  </Button>
 
                 </CardBody>
               </Card>
@@ -147,4 +149,4 @@ function AddService() {
   );
 }
 
-export default AddService;
+export default AddStaff;

@@ -10,7 +10,7 @@ import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper";
 import AuthContextProvider from './contexts/AuthContext';
 import Router from './Router';
-
+  
 ReactDOM.render(
   <div style={{width:"100%",maxWidth:"100vw",height:"100vh"}}>
     <AuthContextProvider>

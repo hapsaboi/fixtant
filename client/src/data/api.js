@@ -36,6 +36,36 @@ export const product = {
 	updateInventory: `${BackEnd}/api/product/update_inventory`,
 	//---------------------------------------------------------------------------------------------------
 };
+export const staff = {
+	//takes in a body with data
+	//data :  
+	// {
+	// 	"product_name":"Tecno Camon CX",
+	// 	"product_desc":"This product is a product",
+	// 	"status":"true",
+	// 	"brand":"Tecno",
+	// 	"variations":[{"variation":"Black-64GB","buying_price":10000,"selling_price":20000}],
+	// 	"store":"Hanis Store"
+	// }
+	addStaff: `${BackEnd}/api/staff/add_staff`,
+	//---------------------------------------------------------------------------------------------------
+
+	//data : store
+	// {
+	// 	"store":"Hanis Store"
+	// }
+	showStoreStaff: `${BackEnd}/api/staff/show_store_staff`,
+	//---------------------------------------------------------------------------------------------------
+	
+	//data : product in JSON format
+	// {
+	// 	 -----
+	// }
+	updateStaff: `${BackEnd}/api/staff/update_staff`,
+	//---------------------------------------------------------------------------------------------------
+
+	
+};
 
 export const service = {
 	//take in a body with data

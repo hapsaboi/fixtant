@@ -4,6 +4,9 @@ import axios from 'axios';
 import Notifications from "components/Notification/Notification";
 import 'boxicons';
 import { FiArrowLeft } from "react-icons/fi";
+import LoadingOverlay from 'react-loading-overlay';
+import { useAuth } from "contexts/AuthContext";
+import Barcode from "components/Scanner/Barcode";
 
 // reactstrap components
 import {
@@ -25,18 +28,24 @@ function Sale() {
     const [currentProduct, setCurrentProduct] = useState({});
     const [selling_price, setSellingPrice] = useState(0);
     const [sellDetailsMode, setSellDetailsMode] = useState(false);
-    const [buyerDetail, setBuyerDetail] = useState({buyer_name:"",phone:"",payment_method:"",address:""});
+    const [buyerDetail, setBuyerDetail] = useState({buyer_name:"",phone:"",payment_method:"Cash",address:""});
     
     const [cart, setCart] = useState([]);
     const [notificationStatus, setNotificationStatus] = useState(false)
     const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
+    const {userDetail} = useAuth();
     
     const [loading, setLoading] = useState(true);
+    const [requestLoading, setRequestLoading] = useState(false);
 
     useEffect(
       () => {
         async function fetchProducts() {
-          await axios.get(product.showStoreProducts).then((response)=>{
+          let id;
+          if(userDetail.type === 'staff'){id=userDetail.store}else{
+            id = userDetail._id;
+          }
+          await axios.get(product.showStoreProducts+"/"+id).then((response)=>{
             if(response.data.status===true){setProducts(response.data.data);}
             else{
               setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
@@ -46,7 +55,9 @@ function Sale() {
         }
         fetchProducts();
       },
+      // eslint-disable-next-line 
     []);
+    
     
     function selectProduct (id,key) {
       setLoading(true);
@@ -113,10 +124,11 @@ function Sale() {
       } 
     }
 
-    async function addSale (details) {
-
+    async function addSale ({details}) {
+      setRequestLoading(true);
+      console.log(buyerDetail.buyer_name);
       if(cart.length>0){
-        if((buyerDetail.buyer_name==="" || buyerDetail.phone==="" || buyerDetail.buyer_address==="" || buyerDetail.payment_method==="") && details.details===true){
+        if((buyerDetail.buyer_name==="" || buyerDetail.phone==="" || buyerDetail.buyer_address==="" || buyerDetail.payment_method==="") && details===true){
           setNotificationDetails({msg:"Some Buyer Fields are Empty", type:"danger"});
           setNotificationStatus(true);
         }else{
@@ -135,12 +147,18 @@ function Sale() {
               setNotificationDetails({msg:"Sale Unsuccessful, Please Refresh and Try Again!", type:"danger"});
             }
             setNotificationStatus(true);
+          }).catch(function (error) {
+            if (error.response) {
+              // Request made and server responded
+              setNotificationDetails({msg:error.response.data.message, type:"danger"});
+            }
           });
         }
       }else{
         setNotificationDetails({msg:"Sale Unsuccessful, Cart is Empty!", type:"danger"});
         setNotificationStatus(true);
       }
+      setRequestLoading(false);
   }
 
     
@@ -168,9 +186,11 @@ function Sale() {
     <>
       {notificationStatus === true ? <Notifications details={notificationDetails}  />:null}
       <div className="content">
+        <Barcode />
         <Row>
           {loading === true ?
           <Col md="8">
+            <LoadingOverlay active={requestLoading} spinner text='Loading your request...'>
             {!sellDetailsMode ? 
             <Card>
               <CardHeader>
@@ -196,6 +216,7 @@ function Sale() {
                         className="btn-simple"
                         color="info"
                         id={key}
+                        key={key}
                         size="sm"
                         onClick={() => {
                           const checked = searchColumns.includes(column);
@@ -314,7 +335,8 @@ function Sale() {
                 </Row>
               </CardBody>
             </Card>
-            }
+            
+            }</LoadingOverlay>
           </Col>
           :
           <Button style={{width:"100%",marginBottom:'15px'}} onClick={()=>{setLoading(!loading); setSellDetailsMode(false)}} className="btn-fill" color="primary">

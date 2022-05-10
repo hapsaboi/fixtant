@@ -31,24 +31,24 @@ function Products() {
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
   const [dataload, setDataLoad] = useState(true);
 
-  useEffect(
-		() => {
-			async function fetchProducts() {
-				await axios.get(product.showStoreProducts).then((response)=>{
-					if(response.data.status===true){
-            setProducts(response.data.data);
-            setDataLoad(false);
-          }
-          else{
-            setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
-            setNotificationStatus(true);
-            setDataLoad(false);
-          }
-				})
-			}
-			fetchProducts();
-		},
-  []);
+    useEffect(
+      () => {
+        async function fetchProducts() {
+          await axios.get(product.showStoreProducts).then((response)=>{
+            if(response.data.status===true){
+              setProducts(response.data.data);
+              setDataLoad(false);
+            }
+            else{
+              setNotificationDetails({msg:"Error Loading Products, Please Referesh The Page", type:"danger"});
+              setNotificationStatus(true);
+              setDataLoad(false);
+            }
+          })
+        }
+        fetchProducts();
+      },
+    []);
   
   const handleRemoveItem = (e) => {
     let new_variation=[]; 
@@ -126,7 +126,7 @@ function Products() {
               <CardHeader>
                 <CardTitle  className='pull-left' tag="h4">Products</CardTitle> 
                 <div className="pull-right" style={{marginBottom:'20px'}}> 
-                    <Link to="/admin/addservice">
+                    <Link to="/admin/addproduct">
                         <Button  className="btn-fill" style={{width:"100%"}} color="primary" type="submit">
                             Add Product
                         </Button>
