@@ -1,4 +1,4 @@
-const BackEnd = process.env.REACT_APP_BackEndHost;
+const BackEnd = process.env.REACT_APP_BackEndHostLocal;
 
 export const product = {
 	//takes in a body with data
@@ -34,6 +34,9 @@ export const product = {
 	// 	 -----
 	// }
 	updateInventory: `${BackEnd}/api/product/update_inventory`,
+	//---------------------------------------------------------------------------------------------------
+
+	scanBarcode: `${BackEnd}/api/product/scan_barcode`,
 	//---------------------------------------------------------------------------------------------------
 };
 export const staff = {

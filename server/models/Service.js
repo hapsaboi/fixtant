@@ -17,7 +17,8 @@ const ServiceSchema = new Schema({
 	price:{
 		type:Number,
 		required: true
-	}
+	},
+	sold_by:{}
 });
 
 module.exports = mongoose.model('Service', ServiceSchema);

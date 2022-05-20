@@ -86,7 +86,7 @@ function AdminNavbar(props) {
           <Collapse navbar isOpen={collapseOpen}>
             <Nav className="ml-auto" navbar>
             {userDetail? 
-              <font style={{fontSize:"20px",padding:"7px"}}>{(userDetail.store)}</font>
+              <font className='primary' style={{fontSize:"20px",padding:"7px"}}>{(userDetail.store_name+ " - " + userDetail.name)}</font>
               :
               null
             }

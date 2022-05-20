@@ -10,7 +10,8 @@ const VariationSchema = new Schema(
 		quantity:{
 			type:Number,
 			default:0
-		}
+		},
+		barcode:String
 	}
 );
 

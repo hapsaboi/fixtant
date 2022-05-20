@@ -52,7 +52,8 @@ const SaleSchema = new Schema(
 		type: {
 			type: String, 
 			required:true
-		}
+		},
+		sold_by:{}
 	}
 );
 

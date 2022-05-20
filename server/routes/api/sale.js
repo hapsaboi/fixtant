@@ -19,10 +19,10 @@ const Products = require('../../models/Product');
 //      ]
 // }
 
-router.post('/add_sale', auth, async(req,res)=>{
+router.post('/add_sale/:id', auth, async(req,res)=>{
+    const store = req.params.id;
     const newSale = new Sales(req.body);
-    newSale.store = req.user.id;
-    console.log(req.body);
+    newSale.store = store;
     try{
         
         const sale = await newSale.save();
@@ -53,9 +53,10 @@ router.post('/add_sale', auth, async(req,res)=>{
 //@routes GET api/sale/
 //@desc Get all 
 //@response - status: true or false | data | error
-router.get('/show_sales', auth, async (req, res) => {
-	const store = req.user.id;
+router.get('/show_sales/:id', auth, async (req, res) => {
+	const store = req.params.id;
     let type = req.query.type;
+    let staffid = req.query.staffid;
     let sale;
 
    
@@ -86,9 +87,14 @@ router.get('/show_sales', auth, async (req, res) => {
                 }
             }).sort('date');
         }
-    }else{
-        sale = await Sales.find({store,type}).sort({date:-1});
-        console.log(sale);
+    }else{  
+        if(staffid){
+            console.log(staffid)
+            sale = await Sales.find({store,type,"sold_by.id":staffid}).sort({date:-1});
+        }else{
+           sale = await Sales.find({store,type}).sort({date:-1}); 
+        }
+        
     };
 	try {
 		if (!sale){res.status(400).send({status:false, error:'Problem with the query'})};

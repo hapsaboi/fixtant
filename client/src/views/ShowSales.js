@@ -5,6 +5,8 @@ import dateFormat from 'dateformat';
 import parse from 'html-react-parser';
 import Notifications from "components/Notification/Notification";
 import { FiArrowLeft } from "react-icons/fi";
+import { useAuth } from "contexts/AuthContext";
+import DateRange from "components/DateRange/DateRange";
 
 // reactstrap components
 import {
@@ -25,11 +27,23 @@ function ShowSales() {
   const [currentSale, setCurrentSale] = useState({});
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
+  const { userDetail } = useAuth();
 
   useEffect(
 		() => {
 			async function fetchSales() {
-				await axios.get(sale.showSales).then((response)=>{
+        let data = {params:{}};
+        let id;
+        if (userDetail.type === 'staff') { 
+          id = userDetail.store;
+          data = {params:{staffid:userDetail._id }};
+        } else {
+          id = userDetail._id;
+        }
+        
+        data.params.type='sale';
+        
+				await axios.get(sale.showSales+'/'+id,data).then((response)=>{
 					if(response.data.status===true){
             if(response.data.data.length>0){
                 setSales((response.data.data));
@@ -43,6 +57,7 @@ function ShowSales() {
       }
 			fetchSales();
 		},
+        // eslint-disable-next-line 
   []);
 
   const [loading, setLoading] = useState(true);
@@ -71,7 +86,7 @@ function ShowSales() {
       ),
     );
   }
-  const result = sales.map(({_id,buyer_name,phone,payment_method,date,items}) => ({_id,buyer_name,phone,payment_method,date,items}));
+  const result = sales.map(({_id,buyer_name,phone,payment_method,date,items,sold_by}) => ({_id,buyer_name,phone,payment_method,date,items,sold_by}));
   const columns = result[0] && Object.keys(result[0]);
 
   return (
@@ -82,8 +97,9 @@ function ShowSales() {
           <Col md="12">
             {loading === true ?
             <Card>
-              <CardHeader>
+              <CardHeader >
                 <CardTitle tag="h4">Sales Record</CardTitle>
+                {/* <DateRange /> */}
                 <Input
                   placeholder="Search based on checked items"
                   type='text'
@@ -145,10 +161,11 @@ function ShowSales() {
                             )
                             
                             }
-                            Paid -  {(saleItem.payment_method)}
+                            Paid -  {(saleItem.payment_method)}<br />
+                            {saleItem.sold_by.name?"Sold By -  "+saleItem.sold_by.name:null}
                           </td>
                           <td>
-                            {((saleItem.items).reduce((accumulator,current) => accumulator + current.price, 0)).toLocaleString()} 
+                            {((saleItem.items).reduce((accumulator,current) => accumulator + (current.price*current.quantity), 0)).toLocaleString()} 
                           </td>
                           <td>
                             <Button onClick={()=> selectSale(saleItem._id)} className="btn-fill" style={{marginBottom:"5px"}} color="primary" type="submit">
@@ -197,7 +214,8 @@ function ShowSales() {
                           <thead className="text-primary">
                             <tr>
                               <th>Products</th>
-                              <th className="text-center">Price</th>
+                              <th className="text-center">Quantity</th>
+                              <th className="text-center">Unit Price</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -206,14 +224,17 @@ function ShowSales() {
                               <td>
                               <Row>
                                   <Col className="pr-md-12" md="6">
-                                    {item.product_name} - {item.variation}
+                                    {item.product_name} - {item.variation} 
                                     <br />
                                   </Col>
                                   
                                 </Row>
                               </td>
+                              <td style={{textAlign:'center'}}>
+                                {item.quantity}
+                              </td>
                               <td className="text-center">
-                                {item.price}
+                                {(item.price).toLocaleString()}
                               </td>
                             </tr>
                             ))}
@@ -222,7 +243,9 @@ function ShowSales() {
                         </Table>
                         <div style={{textAlign:"left:"}}>
                               Payment Method: {currentSale.payment_method}<br />
-                              Total: {(currentSale.items).reduce((accumulator,current) => accumulator + current.price, 0)}
+                              {/* Quantity Sold: {currentSale.}<br /> */}
+                              Total: {(currentSale.items).reduce((accumulator,current) => accumulator + (current.price*current.quantity), 0)}<br />
+                              {currentSale.sold_by.name?"Sold By -  "+currentSale.sold_by.name:null}
                         </div>
                   
                       </div>
@@ -232,7 +255,7 @@ function ShowSales() {
       
                     </CardBody>
                   )
-                : "Loading"
+                : null
               }
             </Card>
         

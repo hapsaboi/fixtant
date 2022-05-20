@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 
 
@@ -13,7 +13,7 @@ import ForgotPassword from './views/auth/ForgotPassword';
 function RouterComp() {
     const { loggedIn,userDetail } = useAuth();
     return (
-        <BrowserRouter>
+        <HashRouter>
 
             {!loggedIn ?
                 <Switch>
@@ -45,7 +45,7 @@ function RouterComp() {
                 </>
             }
 
-        </BrowserRouter>
+        </HashRouter>
     )
 }
 export default RouterComp;

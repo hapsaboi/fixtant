@@ -5,6 +5,7 @@ import dateFormat from 'dateformat';
 import parse from 'html-react-parser';
 import Notifications from "components/Notification/Notification";
 import { FiArrowLeft } from "react-icons/fi";
+import { useAuth } from "contexts/AuthContext";
 
 // reactstrap components
 import {
@@ -25,11 +26,22 @@ function ShowServices() {
   const [currentService, setCurrentService] = useState({});
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
+  const { userDetail } = useAuth();
 
   useEffect(
 		() => {
 			async function fetchServices() {
-				await axios.get(sale.showSales,{params:{type:'service'}}).then((response)=>{
+        let data = {params:{}};
+        let id;
+        if (userDetail.type === 'staff') { 
+          id = userDetail.store;
+          data = {params:{staffid:userDetail._id }};
+        } else {
+          id = userDetail._id;
+        }
+        
+        data.params.type='service';
+				await axios.get(sale.showSales+'/'+id,data).then((response)=>{
 		      if(response.data.status===true){
             if(response.data.data.length>0){
                 setServices((response.data.data));
@@ -43,6 +55,7 @@ function ShowServices() {
       }
 			fetchServices();
 		},
+    // eslint-disable-next-line 
   []);
 
   const [loading, setLoading] = useState(true);
@@ -71,7 +84,7 @@ function ShowServices() {
       ),
     );
   }
-  const result = services.map(({_id,buyer_name,phone,payment_method,date,items}) => ({_id,buyer_name,phone,payment_method,date,items}));
+  const result = services.map(({_id,buyer_name,phone,payment_method,date,items,sold_by}) => ({_id,buyer_name,phone,payment_method,date,items,sold_by}));
   const columns = result[0] && Object.keys(result[0]);
 
   return (
@@ -145,7 +158,8 @@ function ShowServices() {
                           
                           }
                           <br />
-                          Paid -  {(serviceItem.payment_method)}
+                          Paid -  {(serviceItem.payment_method)}<br />
+                          {serviceItem.sold_by.name?"Service By -  "+serviceItem.sold_by.name:null}
                         </td>
                         <td>
                           {((serviceItem.items).reduce((accumulator,current) => accumulator + current.price, 0)).toLocaleString()} 
@@ -221,7 +235,8 @@ function ShowServices() {
                         </Table>
                         <div style={{textAlign:"left:"}}>
                               Payment Method: {currentService.payment_method}<br />
-                              Total: {(currentService.items).reduce((accumulator,current) => accumulator + current.price, 0)}
+                              Total: {(currentService.items).reduce((accumulator,current) => accumulator + current.price, 0)}<br />
+                              {currentService.sold_by.name?"Service By -  "+currentService.sold_by.name:null}
                         </div>
                   
                       </div>
@@ -231,7 +246,7 @@ function ShowServices() {
       
                     </CardBody>
                   )
-                : "Loading"
+                : null
               }
             </Card>
         

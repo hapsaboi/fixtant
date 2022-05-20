@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
                 user.tempToken = undefined;
                 user.tempTokenExpire = undefined;
                 await user.save();
-                console.log(error);
+                //console.log(error);
                 return res.status(500).send({ msg: 'Account not verified, a new verification email sent, email could not be sent. Please contact admin!' });
             }
 
@@ -118,12 +118,24 @@ router.post('/', async (req, res) => {
 //@access Private
 router.get('/user', auth, async(req, res) => {
     let user = await User.findById(req.user.id).select('name store email type');
-    
+    let temp={};
+    let id;
     if(!user){
         user = await Staff.findById(req.user.id);
+        if(user){
+            id = user.store;
+        }
+    }
+
+    if(user.type==='staff'){
+        temp = await User.findOne({_id:user.store}).select('store').then((response)=>{
+            res.json({...user._doc,store_name:response.store}); 
+        });
+        
+    }else{
+        res.json({...user._doc,store_name:user.store});
     }
     
-    res.json(user);
 });
 
 

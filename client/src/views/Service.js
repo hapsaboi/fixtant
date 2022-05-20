@@ -5,6 +5,8 @@ import Notifications from "components/Notification/Notification";
 import { FiArrowLeft } from "react-icons/fi";
 import empty from '../assets/img/service.svg';
 import { Link } from "react-router-dom";
+import { useAuth } from "contexts/AuthContext";
+
 // reactstrap components
 import {
   Card,
@@ -29,11 +31,18 @@ function Service() {
   const [notificationStatus, setNotificationStatus] = useState(false)
   const [notificationDetails, setNotificationDetails] = useState({msg:"",type:""});
   const [dataload, setDataLoad] = useState(true);
+  
+  const { userDetail } = useAuth();
+  
 
   useEffect(
     () => {
         async function fetchServices() {
-            await axios.get(service.showStoreServices).then((response)=>{
+          let id;
+          if (userDetail.type === 'staff') { id = userDetail.store } else {
+            id = userDetail._id;
+          }
+            await axios.get(service.showStoreServices+ "/" + id).then((response)=>{
                 if(response.data.status===true){
                     setServices(response.data.data);
                     setDataLoad(false);
@@ -47,6 +56,7 @@ function Service() {
         }
         fetchServices();
     },
+        // eslint-disable-next-line 
     []);
   
   async function updateService () {

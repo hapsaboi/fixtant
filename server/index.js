@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: ["http://localhost:3000","https://fixtant.netlify.app","http://172.20.10.3:3000"],
+		origin: ["http://172.20.10.3:3000","http://localhost:3000","https://fixtant.netlify.app"],
 		credentials: true
 	})
 );
@@ -42,7 +42,7 @@ app.use('/api/staff', require('./routes/api/staff'));
 
 const PORT = process.env.PORT || process.env.LocalPort;
 
-const server = app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
+const server = app.listen(PORT, '0.0.0.0', () => console.log(`Server started at port ${PORT}`));
 
 // const server = app.listen(PORT, '0.0.0.0', function() {
 // 	console.log(`Server started at port ${PORT}`);

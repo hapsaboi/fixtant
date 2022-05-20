@@ -1,10 +1,11 @@
 import Dashboard from "views/Dashboard.js";
 //import Map from "views/Map.js";
 //import Rtl from "views/Rtl.js"
-import Profile from "views/Profile.js";
+import Profile from "views/staff/Profile.js";
 import Inventory from "views/Inventory";
 import Sale from "views/Sale.js";
 import SaleService from "views/SaleService";
+import ShowServices from "views/ShowServices";
 import ShowSales from "views/ShowSales.js";
 
 
@@ -48,6 +49,13 @@ var routes = [
     name: "Show Sales",
     icon: <RiSlideshowLine size='28' />,
     component: ShowSales,
+    layout: "/staff",
+  },
+  {
+    path: "/show_services",
+    name: "Show Services",
+    icon: <RiSlideshowLine size='28' />,
+    component: ShowServices,
     layout: "/staff",
   },
   {

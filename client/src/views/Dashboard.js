@@ -7,6 +7,7 @@ import moment from "moment";
 
 import DailySalesChart from "components/DashboardComponents/DailySalesChart";
 import salesicon from '../assets/img/sales.svg';
+import { useAuth } from "contexts/AuthContext";
 // reactstrap components
 import {
   Card,
@@ -25,11 +26,22 @@ function Dashboard() {
   const [sales, setSales] = useState({});
   const [today, setToday] = useState([]);
   const [dataload, setDataLoad] = useState(true);
+  const { userDetail } = useAuth();
 
   useEffect(
     () => {
       async function fetchSales() {
-				await axios.get(sale.showSales,{params:{duration:'daily'}}).then((response)=>{
+        let data = {params:{}};
+        let id;
+        if (userDetail.type === 'staff') { 
+          id = userDetail.store;
+          data = {params:{staffid:userDetail._id }};
+        } else {
+          id = userDetail._id;
+        }
+        data.params.duration = 'daily';
+        
+				await axios.get(sale.showSales+'/'+id,data).then((response)=>{
 					if(response.data.status===true){
             if(response.data.data.length>0){
                 let data = response.data.data;
@@ -47,6 +59,7 @@ function Dashboard() {
       }
 			fetchSales();
     },
+      // eslint-disable-next-line 
   []);
   // {date:{$gte:ISODate("2021-01-01"),$lt:ISODate("2020-05-01"}}
   return (
